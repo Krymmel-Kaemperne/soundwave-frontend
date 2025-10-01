@@ -1,0 +1,67 @@
+/* Grundlæggende styling som før... */
+body {
+    margin: 0;
+    font-family: "Be Vietnam Pro", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+/* Skjul alle 'sider' som standard */
+.page-view {
+    display: none;
+}
+
+/* Vis den 'aktive' side */
+.page-view.active {
+    display: block;
+    min-height: 409px;
+    padding: 1rem 2rem;
+}
+
+/* Du kan også tilføje styling for din footer og header her */
+header {
+    background-color: #FFC784;
+    color: #36506b;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+header .logo {
+    margin: 0;
+    font-size: 1.8rem;
+}
+.main-nav a {
+    color: #4E5B69;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: bold;
+}
+
+.main-nav a:hover {
+    color: #3A87E8;
+}
+
+.main-footer {
+    background-color: #FFC784;
+    color: #fff;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+    bottom: 0;
+}
+.footer-section h3 {
+    color: #4E5B69;
+    margin-bottom: 1rem;
+}
+.footer-section p, .footer-section a {
+    color: #4E5B69;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.footer-section a:hover {
+    color: #3A87E8;
+}
+/* Event Grid styling osv. som før */
