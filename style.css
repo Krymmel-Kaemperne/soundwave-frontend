@@ -48,8 +48,6 @@ header .logo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
-    margin-top: 3rem;
-    bottom: 0;
 }
 .footer-section h3 {
     color: #4E5B69;
@@ -65,3 +63,18 @@ header .logo {
     color: #3A87E8;
 }
 /* Event Grid styling osv. som før */
+
+#event-detail-page {
+    padding: 0 !important;
+}
+
+.action-button {
+    background-color: #FFC784;;
+    color: #4E5B69;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 700;
+}
