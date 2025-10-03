@@ -1,3 +1,94 @@
+/* Hero section som titlen*/
+.hero-section {
+    position: relative; /* Vigtigt for at positionere knapper og titel */
+    height: 70vh;
+    width: 100%;
+    overflow: hidden; /* Skjuler de slides, der er uden for skærmen */
+}
+
+/* Hero section - nu som en slider container */
+.hero-section {
+    position: relative; /* Vigtigt for at positionere knapper og titel */
+    height: 70vh;
+    width: 100%;
+    overflow: hidden; /* Skjuler de slides, der er uden for skærmen */
+}
+
+/* Wrapper der indeholder alle slides i en lang række */
+.slider-wrapper {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease-in-out; /* Giver en blød glide-effekt */
+}
+
+/* Styling for en enkelt slide */
+.slide {
+    flex-shrink: 0; /* Forhindrer slides i at blive klemt sammen */
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex; /* Bruges til at positionere indholdet i sliden */
+    flex-direction: column;
+    justify-content: flex-end; /* Placerer indhold i bunden */
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* Indholdet (titel, dato) i en slide */
+.slide-content {
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+.slide-content h2 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+.slide-content p {
+    font-size: 1.2rem;
+    margin: 0.5rem 0 0 0;
+}
+
+
+/* Knapper til at navigere i slideren */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    border:none;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.slider-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.prev-btn {
+    left: 20px;
+}
+
+.next-btn {
+    right: 20px;
+}
+
+.hero-title {
+    position: absolute;
+    top:2rem;
+    padding: 2rem;
+    color:#fff;
+    font-size: 5rem;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin: 0;
+    z-index: 10; /* Sørger for at den er over billederne */
+}
+
 /* Grundlæggende styling som før... */
 body {
     margin: 0;
@@ -14,7 +105,7 @@ body {
 .page-view.active {
     display: block;
     min-height: 409px;
-    padding: 1rem 2rem;
+    /*padding: 1rem 2rem;*/
 }
 
 /* Du kan også tilføje styling for din footer og header her */
@@ -23,7 +114,8 @@ header {
     color: #36506b;
     padding: 1rem 2rem;
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between;  <-- ÆNDR FRA DENNE */
+    justify-content: center; /* <-- TIL DENNE */
     align-items: center;
 }
 header .logo {
@@ -51,6 +143,16 @@ header .logo {
     margin-top: 3rem;
     bottom: 0;
 }
+
+.footer-section h1 {
+    color: #4E5B69;
+    padding: 1rem;
+    font-size: 2rem;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin: 0;
+}
+
 .footer-section h3 {
     color: #4E5B69;
     margin-bottom: 1rem;
@@ -111,3 +213,108 @@ header .logo {
   margin-bottom: 10px;
   font-weight: bold;
 }
+
+/* Styling for overskrift med bjælker */
+
+.section-title-container { /*Bjælker*/
+    display: flex;
+    align-items: center; 
+    margin: 50px 0 30px 0; 
+}
+
+/* De orange bjælker på hver side af teksten */
+.section-title-container::before,
+.section-title-container::after {
+    content: ''; 
+    flex-grow: 1; 
+    background: #FFC784; 
+    height: 30px; 
+}
+
+/* Selve overskriften "Kommende Events" */
+.section-title {
+    color: #36506b;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-transform: uppercase; 
+    white-space: nowrap; 
+    margin: 0;
+    
+    /* Dette skaber "hullet" i midten til teksten */
+    padding: 0 1.5em; 
+}
+
+/* Event Grid styling osv. */
+
+.event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsivt grid */
+    gap: 20px;
+    padding: 20px;
+}
+
+.event-card {
+    background-color: #fff;
+    /*border: 1px solid #ddd;*/
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+    display: flex; /* Brug flexbox for layout af billede og info */
+    flex-direction: column; /* Stabel billede over info */
+}
+
+.event-card:hover:not(.sold-out) {
+    /*transform: translateY(-5px);*/
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.event-card-image {
+    width: 100%;
+    height: 180px; /* Fast højde for billeder */
+    object-fit: cover; /* Sikrer billedet dækker området uden at strække */
+}
+
+.event-card-info {
+    padding: 15px;
+}
+
+.event-card-info h3 {
+    margin-top: 0;
+    color: #36506b;
+    font-size: 1.3rem;
+}
+
+.event-card-info p {
+    margin: 5px 0;
+    color: #4E5B69;
+}
+
+/* Styling for udsolgte events */
+.event-card.sold-out {
+    opacity: 0.6;
+    background-color: #f2f2f2;
+    cursor: not-allowed;
+}
+
+.event-card.sold-out .event-card-info h3,
+.event-card.sold-out .event-card-info p {
+    color: #888;
+}
+
+.sold-out-text {
+    font-weight: bold;
+    color: #cc0000 !important; /* Vigtigt for at overskrive den grå farve */
+    margin-top: 10px;
+}
+
+.action-button {
+    background-color: #FFC784;;
+    color: #4E5B69;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
