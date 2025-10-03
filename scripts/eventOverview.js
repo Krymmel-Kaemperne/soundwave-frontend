@@ -19,11 +19,9 @@ const EventOverviewView = {
             }
             const events = await response.json();
             events.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
-
-            // --- NY SLIDER LOGIK STARTER HER ---
             
             // 1. Vælg de første 3 events til slideren (eller færre, hvis der ikke er 3)
-            const sliderEvents = events.slice(0, 3);
+            const sliderEvents = events.slice(0, 4);
 
             let slidesHtml = '';
             if (sliderEvents.length > 0) {
@@ -77,7 +75,7 @@ const EventOverviewView = {
                                 <p><strong>Dato:</strong> ${formattedDate} kl. ${formattedTime}</p>
                                 <p><strong>Hal:</strong> ${event.hall ? event.hall.name : 'Ukendt Hal'}</p>
                                 <p><strong>Pris fra:</strong> ${event.basePrice ? event.basePrice + ' DKK' : 'Ukendt'}</p>
-                                ${isSoldOut ? '<p class="sold-out-text">Udsolgt!</p>' : '<p>Klik for detaljer</p>'}
+                                ${isSoldOut ? '<p class="sold-out-text">Udsolgt!</p>' : ''}
                             </div>
                         </div>`;
                 });

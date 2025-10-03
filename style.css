@@ -143,6 +143,16 @@ header .logo {
     margin-top: 3rem;
     bottom: 0;
 }
+
+.footer-section h1 {
+    color: #4E5B69;
+    padding: 1rem;
+    font-size: 2rem;
+    font-weight: 200;
+    text-transform: uppercase;
+    margin: 0;
+}
+
 .footer-section h3 {
     color: #4E5B69;
     margin-bottom: 1rem;
@@ -198,7 +208,7 @@ header .logo {
 
 .event-card {
     background-color: #fff;
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
     overflow: hidden;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     cursor: pointer;
@@ -207,7 +217,7 @@ header .logo {
 }
 
 .event-card:hover:not(.sold-out) {
-    transform: translateY(-5px);
+    /*transform: translateY(-5px);*/
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
