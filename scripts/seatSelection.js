@@ -1,9 +1,10 @@
 // scripts/seatSelection.js
 
 const SeatSelectionView = {
-    selectedSeats: {}, // Gem valgte sæder her: { id: { row, seatNum, price, type, areaId, count?, areaName? } }
+    selectedSeats: {}, // { id: { row, seatNum, price, type, areaId, count?, areaName? } }
     totalPrice: 0,
-    mockData: {}, // Til at gemme mock-data, når den er hentet
+    mockData: {},
+    currentStandingArea: null, // Holder styr på hvilken ståplads-område modalen viser
 
     render: async (eventId) => {
         const pageContainer = document.getElementById("seat-selection-page");
@@ -13,89 +14,121 @@ const SeatSelectionView = {
         }
 
         pageContainer.innerHTML = `<p style="text-align: center;">Indlæser sædevalg for event ${eventId}...</p>`;
-        SeatSelectionView.selectedSeats = {}; // Nulstil valgte sæder ved hver render
+        SeatSelectionView.selectedSeats = {};
         SeatSelectionView.totalPrice = 0;
 
 
         try {
-            const response = await fetch('/data/mock-seats.json'); // Henter mock-data
+            const response = await fetch(`http://localhost:8080/events/${eventId}/seats/map`);
             if (!response.ok) {
                 throw new Error(`HTTP fejl! Status: ${response.status}`);
             }
-            SeatSelectionView.mockData = await response.json(); // Gem data globalt i view'et
+            SeatSelectionView.mockData = await response.json();
 
-            let fullPageHtml = `
-                <div class="seat-selection-wrapper"> <!-- Ny wrapper for bedre flex-layout -->
+             let fullPageHtml = `
+                <div class="seat-selection-wrapper">
                     <div class="seat-selection-header">
                         <button id="seat-selection-back-button" class="action-button">&larr; Tilbage til oversigt</button>
                         <h2 style="text-align: center;">Vælg Sæder til ${SeatSelectionView.mockData.eventName}</h2>
                     </div>
 
                     <div class="seat-map-and-summary-container">
-                        <!-- Hovedområdet for sædeplanen -->
                         <div id="seat-map-container" class="seat-map-main-area">
-                            <p style="margin-bottom: 30px; font-size: 1.1rem; color: #555;">Vælg dine pladser i ${SeatSelectionView.mockData.hallName}.</p>
-            `;
+                            <!-- NYT: Dette er nu den inderste container, der holder SCENE, Gulv, VIP Balkon -->
+                            <div class="arena-visual-layout"> 
+                                <p style="margin-bottom: 30px; font-size: 1.1rem; color: #555; text-align: center;">Vælg dine pladser i ${SeatSelectionView.mockData.hallName}.</p>
+                                
+                                <!-- Scene-boks forrest -->
+                                <div class="scene-box">SCENE</div>
+`;
 
-            // Byg sædeplanen inden i #seat-map-container
-            SeatSelectionView.mockData.areas.forEach(area => {
-                fullPageHtml += `
+              let standingAreaHtml = '';
+            let vipLeftHtml = '';
+            let vipRightHtml = '';
+            let vipBackHtml = '';
+
+            // Sorter for at sikre, at vi behandler standing før seating, og derefter balkon-sektioner
+            const sortedAreas = [...SeatSelectionView.mockData.areas].sort((a, b) => {
+                if (a.type === 'standing') return -1;
+                if (b.type === 'standing') return 1;
+                // Sorter balkon-sektioner manuelt for specifik placering
+                // Disse tal afgør rækkefølgen i den nye sorteringslogik
+                const order = {"VIP Balkon - Venstre (Siddepladser)": 1, "VIP Balkon - Bag (Siddepladser)": 2, "VIP Balkon - Højre (Siddepladser)": 3};
+                return (order[a.areaName] || 0) - (order[b.areaName] || 0);
+            });
+
+
+            sortedAreas.forEach(area => {
+                let areaContentHtml = `
                     <div class="area-container" data-area-id="${area.areaId}">
-                        <h3 class="area-name">${area.areaName}</h3>
                 `;
 
-                if (area.type === 'seating') {
-                    // ** Tegn et visuelt sæde-grid **
+                if (area.type === 'standing') {
+                    const availableTickets = area.capacity - area.bookedCount;
+                    const currentStandingCount = SeatSelectionView.selectedSeats[area.areaId]?.count || 0;
+                    const isStandingAreaSelected = currentStandingCount > 0;
+                    const isStandingAreaBookedOut = availableTickets <= 0;
+
+                    areaContentHtml += `
+                        <div class="standing-area-box ${isStandingAreaBookedOut ? 'sold-out' : ''} ${isStandingAreaSelected ? 'selected' : ''}" 
+                             data-area-id="${area.areaId}" 
+                             data-price="${area.price}" 
+                             data-area-name="${area.areaName}"
+                             data-max-tickets="${availableTickets}"
+                             ${isStandingAreaBookedOut ? '' : 'role="button" tabindex="0"'}>
+                            <div class="standing-info">
+                                <h3>${area.areaName}</h3>
+                                <p>${availableTickets} ${availableTickets === 1 ? 'ståplads' : 'ståpladser'} tilbage</p>
+                                <p>Pris: ${area.price} DKK per billet</p>
+                                ${isStandingAreaSelected ? `<p class="standing-selected-text">${currentStandingCount} valgt</p>` : ''}
+                            </div>
+                            ${isStandingAreaBookedOut ? '<p class="sold-out-text">Udsolgt!</p>' : ''}
+                        </div>
+                    `;
+                    standingAreaHtml = areaContentHtml + `</div>`; // Luk area-container for standing
+                } else if (area.type === 'seating') {
                     const rows = {};
                     area.seats.forEach(seat => {
                         if (!rows[seat.rowNumber]) rows[seat.rowNumber] = [];
                         rows[seat.rowNumber].push(seat);
                     });
 
+                    areaContentHtml += `<div class="seating-area-grid">`;
                     for (const rowNum in rows) {
-                        fullPageHtml += `<div class="seat-row"><span>Række ${rowNum}:</span>`;
+                        // NYT: Rækkenummer placeres nu udenfor grid'et for bedre kontrol
+                        areaContentHtml += `<div class="seat-row-wrapper"><span></span><div class="seat-row-grid">`;
                         rows[rowNum].sort((a, b) => a.seatNumber - b.seatNumber).forEach(seat => {
                             const seatClass = seat.status === 'booked' ? 'seat booked' : 'seat available';
-                            fullPageHtml += `<div class="${seatClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${seat.price}" title="Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${seat.price} DKK">
+                            const isSelectedClass = SeatSelectionView.selectedSeats[seat.seatId] ? 'selected' : '';
+                            areaContentHtml += `<div class="${seatClass} ${isSelectedClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${seat.price}" title="Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${seat.price} DKK">
                                                 ${seat.seatNumber}
                                             </div>`;
                         });
-                        fullPageHtml += `</div>`;
+                        areaContentHtml += `</div></div>`; // Luk seat-row-grid og seat-row-wrapper
                     }
-
-                } else if (area.type === 'standing') {
-                    const availableTickets = area.capacity - area.bookedCount;
-                        const currentStandingCount = SeatSelectionView.selectedSeats[area.areaId]?.count || 0; // Hent nuværende valg
-
-                        fullPageHtml += `
-                            <div class="standing-area-box ${availableTickets <= 0 ? 'sold-out' : ''}" 
-                                data-area-id="${area.areaId}" 
-                                data-price="${area.price}" 
-                                data-area-name="${area.areaName}"
-                                data-type="standing">
-                                <div class="standing-info">
-                                    <h3>${area.areaName}</h3>
-                                    <p>${availableTickets} ${availableTickets === 1 ? 'ståplads' : 'ståpladser'} tilbage</p>
-                                    <p>Pris: ${area.price} DKK per billet</p>
-                                </div>
-                                ${availableTickets <= 0 ? '<p class="sold-out-text">Udsolgt!</p>' : ''}
-                                <div class="standing-input-control">
-                                    <label for="standing-tickets-${area.areaId}">Antal:</label>
-                                    <input type="number" id="standing-tickets-${area.areaId}" name="standing-tickets" 
-                                        min="0" max="${availableTickets}" value="${currentStandingCount}" 
-                                        data-area-id="${area.areaId}" data-price="${area.price}" 
-                                        data-area-name="${area.areaName}" ${availableTickets <= 0 ? 'disabled' : ''}>
-                                    <button class="action-button update-standing-btn" 
-                                            data-area-id="${area.areaId}" 
-                                            ${availableTickets <= 0 ? 'disabled' : ''}>Opdater</button>
-                                </div>
-                            </div>
-                        `;
+                    areaContentHtml += `</div>`; // Luk seating-area-grid
+                    
+                    // Fordel balkon-sektionerne til deres specifikke HTML-variabler
+                    if (area.areaName.includes("Venstre")) {
+                        vipLeftHtml = areaContentHtml + `</div>`; // Luk area-container
+                    } else if (area.areaName.includes("Højre")) {
+                        vipRightHtml = areaContentHtml + `</div>`; // <-- RETTET
+                    } else if (area.areaName.includes("Bag")) {
+                        vipBackHtml = areaContentHtml + `</div>`; // Luk area-container
                     }
-                fullPageHtml += `</div>`; // Luk area-container
+                }
+                // IKKE fullPageHtml += `</div>`; her, da vi samler dem i HTML-variabler
             });
 
+            // Nu samler vi alt den dynamisk genererede HTML i den ydre fullPageHtml string
             fullPageHtml += `
+                                <div class="arena-grid-layout">
+                                    <div class="vip-side-left">${vipLeftHtml}</div>
+                                    <div class="standing-center">${standingAreaHtml}</div>
+                                    <div class="vip-side-right">${vipRightHtml}</div>
+                                    <div class="vip-back">${vipBackHtml}</div>
+                                </div>
+                            </div> <!-- Luk arena-visual-layout -->
                         </div> <!-- Luk #seat-map-container -->
 
                         <!-- Området for ordre-opsummering -->
@@ -121,18 +154,16 @@ const SeatSelectionView = {
     },
 
     updateOrderSummary: () => {
-        // Hent elementer EFTER de er indsat i DOM'en af render()
         const orderList = document.getElementById("selected-seats-list");
         const totalPriceSpan = document.getElementById("total-price");
         const proceedButton = document.getElementById("proceed-to-checkout-button");
 
-        // Tjek for null, i tilfælde af fejl i render() eller race condition
         if (!orderList || !totalPriceSpan || !proceedButton) {
-            console.error("Fejl: Kunne ikke finde ordre-opsummeringselementer i DOM'en.");
+            console.error("Fejl: Kunne ikke finde ordre-opsummeringselementer i DOM'en under updateOrderSummary.");
             return;
         }
 
-        orderList.innerHTML = ''; // Ryd listen
+        orderList.innerHTML = '';
         SeatSelectionView.totalPrice = 0;
         let hasSelections = false;
 
@@ -155,7 +186,7 @@ const SeatSelectionView = {
 
         if (!hasSelections) {
             orderList.innerHTML = '<li>Ingen sæder valgt endnu.</li>';
-            proceedButton.disabled = true; // Deaktiver knappen, hvis intet er valgt
+            proceedButton.disabled = true;
         } else {
             proceedButton.disabled = false;
         }
@@ -192,7 +223,6 @@ const SeatSelectionView = {
                         seat: seatNum,
                         price: price,
                         type: 'seating',
-                        // Find areaName dynamisk fra det genererede HTML eller mockData
                         areaName: seatElement.closest('.area-container').querySelector('.area-name')?.textContent.replace(/\(Siddepladser\)/, '').trim() || 'Ukendt Siddepladsområde'
                     };
                     seatElement.classList.add('selected');
@@ -201,42 +231,17 @@ const SeatSelectionView = {
             });
         });
 
-        // --- Håndtering af ståpladser ---
-        document.querySelectorAll('.standing-area-box .update-standing-btn').forEach(buttonElement => {
-            buttonElement.addEventListener('click', () => {
-                const areaId = buttonElement.dataset.areaId;
-                const inputElement = document.getElementById(`standing-tickets-${areaId}`);
-                if (!inputElement) return;
-
-                const price = parseFloat(inputElement.dataset.price);
-                const areaName = inputElement.dataset.areaName;
-                let count = parseInt(inputElement.value);
-
-                // Valider count mod max tilgængelige billetter
-                const areaData = SeatSelectionView.mockData.areas.find(a => a.areaId.toString() === areaId);
-                const maxAvailable = areaData ? (areaData.capacity - areaData.bookedCount) : 0;
-                
-                if (count < 0 || isNaN(count)) { // Sørg for minimum 0
-                    count = 0;
-                    inputElement.value = 0;
-                } else if (count > maxAvailable) { // Respekter max kapacitet
-                    count = maxAvailable;
-                    inputElement.value = maxAvailable;
-                    alert(`Du kan maksimalt vælge ${maxAvailable} billetter til ${areaName}.`);
-                }
-
-                if (count > 0) {
-                    SeatSelectionView.selectedSeats[areaId] = {
-                        id: areaId,
-                        areaName: areaName,
-                        price: price,
-                        count: count,
-                        type: 'standing'
-                    };
-                } else {
-                    delete SeatSelectionView.selectedSeats[areaId];
-                }
-                SeatSelectionView.updateOrderSummary();
+        // --- Håndtering af ståpladser (NU MED MODAL) ---
+        document.querySelectorAll('.standing-area-box:not(.sold-out)').forEach(standingAreaElement => {
+            standingAreaElement.addEventListener('click', () => {
+                SeatSelectionView.currentStandingArea = { // Gem den aktuelle area i en global variabel
+                    areaId: standingAreaElement.dataset.areaId,
+                    areaName: standingAreaElement.dataset.areaName,
+                    price: parseFloat(standingAreaElement.dataset.price),
+                    maxTickets: parseInt(standingAreaElement.dataset.maxTickets),
+                    currentSelectedCount: SeatSelectionView.selectedSeats[standingAreaElement.dataset.areaId]?.count || 0
+                };
+                SeatSelectionView.openStandingModal(); // Åbn modalen
             });
         });
 
@@ -255,6 +260,158 @@ const SeatSelectionView = {
         }
 
         // Initial opdatering af opsummering
-        SeatSelectionView.updateOrderSummary();
+        // SeatSelectionView.updateOrderSummary();
+    },
+
+    // --- NYE METODER TIL MODALEN ---
+    openStandingModal: () => {
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('standing-selection-modal');
+        const area = SeatSelectionView.currentStandingArea;
+
+        if (!modalOverlay || !modalContent || !area) {
+            console.error("Modal elementer eller currentStandingArea mangler.");
+            return;
+        }
+
+        let currentCount = SeatSelectionView.selectedSeats[area.areaId]?.count || 0;
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <h3>Sektion:</h3>
+                <h1>STÅPLADSER</h1>
+                <p>Denne sektion indeholder unummererede pladser</p>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ticket-type-row">
+                    <div class="ticket-indicator" style="background-color: #2196F3;"></div>
+                    <div class="ticket-info">
+                        <p class="ticket-name">Ståplads</p>
+                        <p class="ticket-price">${area.price.toFixed(2)} kr. stk</p>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="quantity-btn minus-btn" data-area-id="${area.areaId}">-</button>
+                        <span class="quantity-display">${currentCount}</span>
+                        <button class="quantity-btn plus-btn" data-area-id="${area.areaId}">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="total-tickets-info">
+                    <p><span class="selected-ticket-count">${currentCount}</span> Billet</p>
+                    <p><span class="total-ticket-price">${(currentCount * area.price).toFixed(2)}</span> kr.</p>
+                </div>
+                <button id="add-standing-to-order-btn" class="action-button">Tilføj til ordre</button>
+            </div>
+        `;
+
+        modalOverlay.classList.add('show'); // Vis modalen
+        SeatSelectionView.attachModalListeners(area); // Tilføj listeners
+    },
+
+    closeStandingModal: () => {
+        const modalOverlay = document.getElementById('modal-overlay');
+        if (modalOverlay) {
+            modalOverlay.classList.remove('show');
+        }
+        SeatSelectionView.currentStandingArea = null; // Ryd current area
+    },
+
+    attachModalListeners: (area) => {
+        const closeBtn = document.querySelector('#standing-selection-modal .close-modal-btn');
+        if (closeBtn) closeBtn.addEventListener('click', SeatSelectionView.closeStandingModal);
+
+        const minusBtn = document.querySelector('#standing-selection-modal .minus-btn');
+        const plusBtn = document.querySelector('#standing-selection-modal .plus-btn');
+        const quantityDisplay = document.querySelector('#standing-selection-modal .quantity-display');
+        const selectedTicketCount = document.querySelector('#standing-selection-modal .selected-ticket-count');
+        const totalTicketPrice = document.querySelector('#standing-selection-modal .total-ticket-price');
+        const addStandingToOrderBtn = document.getElementById('add-standing-to-order-btn');
+
+        let currentModalCount = SeatSelectionView.selectedSeats[area.areaId]?.count || 0;
+        // <<< HER ER DEN KORREKTE PLACERING AF initialSelectedCount >>>
+        const initialSelectedCount = SeatSelectionView.selectedSeats[area.areaId]?.count || 0; 
+
+
+        const updateModalDisplay = () => {
+            quantityDisplay.textContent = currentModalCount;
+            selectedTicketCount.textContent = currentModalCount;
+            totalTicketPrice.textContent = (currentModalCount * area.price).toFixed(2);
+
+            // Deaktiver plus/minus knapper hvis grænser nås
+            if (plusBtn) plusBtn.disabled = currentModalCount >= Math.min(area.maxTickets, 10);
+            if (minusBtn) minusBtn.disabled = currentModalCount <= 0;
+            
+            // Logik for "Tilføj til ordre" knappen
+            if (addStandingToOrderBtn) {
+                if (currentModalCount > 0) {
+                    addStandingToOrderBtn.disabled = false;
+                    addStandingToOrderBtn.textContent = 'Tilføj til ordre';
+                } else if (initialSelectedCount > 0 && currentModalCount === 0) {
+                    // Hvis der FØR var valgt billetter, men nu er 0, skal man kunne fjerne
+                    addStandingToOrderBtn.disabled = false;
+                    addStandingToOrderBtn.textContent = 'Fjern fra ordre';
+                } else {
+                    addStandingToOrderBtn.disabled = true;
+                    addStandingToOrderBtn.textContent = 'Tilføj til ordre';
+                }
+            }
+        }; // Lukker updateModalDisplay
+
+        // Event listeners til knapperne
+        if (plusBtn) {
+            plusBtn.addEventListener('click', () => {
+                if (currentModalCount < Math.min(area.maxTickets, 10)) {
+                    currentModalCount++;
+                    updateModalDisplay();
+                }
+            });
+        }
+        if (minusBtn) {
+            minusBtn.addEventListener('click', () => {
+                if (currentModalCount > 0) {
+                    currentModalCount--;
+                    updateModalDisplay();
+                }
+            });
+        }
+
+        if (addStandingToOrderBtn) {
+            addStandingToOrderBtn.addEventListener('click', () => {
+                if (currentModalCount > 0) {
+                    SeatSelectionView.selectedSeats[area.areaId] = {
+                        id: area.areaId,
+                        areaName: area.areaName,
+                        price: area.price,
+                        count: currentModalCount,
+                        type: 'standing'
+                    };
+                } else {
+                    delete SeatSelectionView.selectedSeats[area.areaId];
+                }
+                SeatSelectionView.updateOrderSummary();
+                SeatSelectionView.closeStandingModal();
+
+                const standingAreaBox = document.querySelector(`.standing-area-box[data-area-id="${area.areaId}"]`);
+                if (standingAreaBox) {
+                    if (currentModalCount > 0) {
+                        standingAreaBox.classList.add('selected');
+                        let selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
+                        if(!selectedTextElement) {
+                            selectedTextElement = document.createElement('p');
+                            selectedTextElement.className = 'standing-selected-text';
+                            standingAreaBox.querySelector('.standing-info').appendChild(selectedTextElement);
+                        }
+                        selectedTextElement.textContent = `${currentModalCount} valgt`;
+                    } else {
+                        standingAreaBox.classList.remove('selected');
+                        const selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
+                        if (selectedTextElement) selectedTextElement.remove();
+                    }
+                }
+            });
+        }
+        updateModalDisplay(); // Initial visning
     }
 };

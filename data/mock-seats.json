@@ -13,7 +13,7 @@
     },
     {
       "areaId": 102,
-      "areaName": "VIP Balkon (Siddepladser)",
+      "areaName": "VIP Balkon - Venstre (Siddepladser)",
       "type": "seating",
       "seats": [
         {"seatId": 1001, "rowNumber": 1, "seatNumber": 1, "status": "available", "price": 600},
@@ -25,12 +25,8 @@
         {"seatId": 1007, "rowNumber": 1, "seatNumber": 7, "status": "available", "price": 600},
         {"seatId": 1008, "rowNumber": 1, "seatNumber": 8, "status": "available", "price": 600},
         {"seatId": 1009, "rowNumber": 1, "seatNumber": 9, "status": "available", "price": 600},
-        {"seatId": 1010, "rowNumber": 1, "seatNumber": 10, "status": "booked", "price": 600},
-        {"seatId": 1011, "rowNumber": 1, "seatNumber": 11, "status": "available", "price": 600},
-        {"seatId": 1012, "rowNumber": 1, "seatNumber": 12, "status": "available", "price": 600},
-        {"seatId": 1013, "rowNumber": 1, "seatNumber": 13, "status": "available", "price": 600},
-        {"seatId": 1014, "rowNumber": 1, "seatNumber": 14, "status": "available", "price": 600},
-        {"seatId": 1015, "rowNumber": 1, "seatNumber": 15, "status": "available", "price": 600},
+        {"seatId": 1010, "rowNumber": 1, "seatNumber": 10, "status": "available", "price": 600},
+        
 
         {"seatId": 1016, "rowNumber": 2, "seatNumber": 1, "status": "available", "price": 600},
         {"seatId": 1017, "rowNumber": 2, "seatNumber": 2, "status": "available", "price": 600},
@@ -41,13 +37,15 @@
         {"seatId": 1022, "rowNumber": 2, "seatNumber": 7, "status": "booked", "price": 600},
         {"seatId": 1023, "rowNumber": 2, "seatNumber": 8, "status": "available", "price": 600},
         {"seatId": 1024, "rowNumber": 2, "seatNumber": 9, "status": "available", "price": 600},
-        {"seatId": 1025, "rowNumber": 2, "seatNumber": 10, "status": "available", "price": 600},
-        {"seatId": 1026, "rowNumber": 2, "seatNumber": 11, "status": "booked", "price": 600},
-        {"seatId": 1027, "rowNumber": 2, "seatNumber": 12, "status": "available", "price": 600},
-        {"seatId": 1028, "rowNumber": 2, "seatNumber": 13, "status": "available", "price": 600},
-        {"seatId": 1029, "rowNumber": 2, "seatNumber": 14, "status": "available", "price": 600},
-        {"seatId": 1030, "rowNumber": 2, "seatNumber": 15, "status": "available", "price": 600},
-
+        {"seatId": 1025, "rowNumber": 2, "seatNumber": 10, "status": "available", "price": 600}
+        
+      ]
+    },
+    {
+      "areaId": 103,
+      "areaName": "VIP Balkon - Højre (Siddepladser)",
+      "type": "seating",
+      "seats": [
         {"seatId": 1031, "rowNumber": 3, "seatNumber": 1, "status": "available", "price": 600},
         {"seatId": 1032, "rowNumber": 3, "seatNumber": 2, "status": "available", "price": 600},
         {"seatId": 1033, "rowNumber": 3, "seatNumber": 3, "status": "available", "price": 600},
@@ -57,13 +55,8 @@
         {"seatId": 1037, "rowNumber": 3, "seatNumber": 7, "status": "available", "price": 600},
         {"seatId": 1038, "rowNumber": 3, "seatNumber": 8, "status": "available", "price": 600},
         {"seatId": 1039, "rowNumber": 3, "seatNumber": 9, "status": "booked", "price": 600},
-        {"seatId": 1040, "rowNumber": 3, "seatNumber": 10, "status": "available", "price": 600},
-        {"seatId": 1041, "rowNumber": 3, "seatNumber": 11, "status": "available", "price": 600},
-        {"seatId": 1042, "rowNumber": 3, "seatNumber": 12, "status": "available", "price": 600},
-        {"seatId": 1043, "rowNumber": 3, "seatNumber": 13, "status": "available", "price": 600},
-        {"seatId": 1044, "rowNumber": 3, "seatNumber": 14, "status": "available", "price": 600},
-        {"seatId": 1045, "rowNumber": 3, "seatNumber": 15, "status": "booked", "price": 600},
-
+        {"seatId": 1040, "rowNumber": 3, "seatNumber": 10, "status": "booked", "price": 600},
+        
         {"seatId": 1046, "rowNumber": 4, "seatNumber": 1, "status": "available", "price": 580},
         {"seatId": 1047, "rowNumber": 4, "seatNumber": 2, "status": "available", "price": 580},
         {"seatId": 1048, "rowNumber": 4, "seatNumber": 3, "status": "available", "price": 580},
@@ -72,15 +65,17 @@
         {"seatId": 1051, "rowNumber": 4, "seatNumber": 6, "status": "available", "price": 580},
         {"seatId": 1052, "rowNumber": 4, "seatNumber": 7, "status": "available", "price": 580},
         {"seatId": 1053, "rowNumber": 4, "seatNumber": 8, "status": "available", "price": 580},
-        {"seatId": 1054, "rowNumber": 4, "seatNumber": 9, "status": "booked", "price": 580},
-        {"seatId": 1055, "rowNumber": 4, "seatNumber": 10, "status": "available", "price": 580},
-        {"seatId": 1056, "rowNumber": 4, "seatNumber": 11, "status": "available", "price": 580},
-        {"seatId": 1057, "rowNumber": 4, "seatNumber": 12, "status": "available", "price": 580},
-        {"seatId": 1058, "rowNumber": 4, "seatNumber": 13, "status": "available", "price": 580},
-        {"seatId": 1059, "rowNumber": 4, "seatNumber": 14, "status": "available", "price": 580},
-        {"seatId": 1060, "rowNumber": 4, "seatNumber": 15, "status": "available", "price": 580},
-
-        {"seatId": 1061, "rowNumber": 5, "seatNumber": 1, "status": "available", "price": 580},
+        {"seatId": 1053, "rowNumber": 4, "seatNumber": 9, "status": "available", "price": 580},
+        {"seatId": 1053, "rowNumber": 4, "seatNumber": 10, "status": "available", "price": 580}
+        
+      ]
+    },
+    {
+      "areaId": 104,
+      "areaName": "VIP Balkon - Bag (Siddepladser)",
+      "type": "seating",
+      "seats": [
+         {"seatId": 1061, "rowNumber": 5, "seatNumber": 1, "status": "available", "price": 580},
         {"seatId": 1062, "rowNumber": 5, "seatNumber": 2, "status": "booked", "price": 580},
         {"seatId": 1063, "rowNumber": 5, "seatNumber": 3, "status": "available", "price": 580},
         {"seatId": 1064, "rowNumber": 5, "seatNumber": 4, "status": "available", "price": 580},
