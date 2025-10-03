@@ -259,3 +259,15 @@ header .logo {
     color: #cc0000 !important; /* Vigtigt for at overskrive den grå farve */
     margin-top: 10px;
 }
+
+.action-button {
+    background-color: #FFC784;;
+    color: #4E5B69;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
