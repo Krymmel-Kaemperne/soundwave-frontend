@@ -202,31 +202,39 @@ const SeatSelectionView = {
         });
 
         // --- Håndtering af ståpladser ---
-        document.querySelectorAll('.standing-area-box:not(.sold-out)').forEach(standingAreaElement => {
-            standingAreaElement.addEventListener('click', () => {
-                const areaId = standingAreaElement.dataset.areaId;
-                const price = parseFloat(standingAreaElement.dataset.price);
-                const areaName = standingAreaElement.dataset.areaName;
+        document.querySelectorAll('.standing-area-box .update-standing-btn').forEach(buttonElement => {
+            buttonElement.addEventListener('click', () => {
+                const areaId = buttonElement.dataset.areaId;
+                const inputElement = document.getElementById(`standing-tickets-${areaId}`);
+                if (!inputElement) return;
 
-                // Vi antager, at man vælger ÉN ståplads ad gangen ved klik,
-                // da der ikke er et inputfelt til antal.
-                // Hvis der skal være et inputfelt senere, skal denne logik tilpasses.
-                const currentSelection = SeatSelectionView.selectedSeats[areaId];
+                const price = parseFloat(inputElement.dataset.price);
+                const areaName = inputElement.dataset.areaName;
+                let count = parseInt(inputElement.value);
 
-                if (currentSelection && currentSelection.count > 0) {
-                    // Hvis allerede valgt, fravælg
-                    delete SeatSelectionView.selectedSeats[areaId];
-                    standingAreaElement.classList.remove('selected');
-                } else {
-                    // Vælg (eller forøg antallet - her vælger vi bare 1 som default)
+                // Valider count mod max tilgængelige billetter
+                const areaData = SeatSelectionView.mockData.areas.find(a => a.areaId.toString() === areaId);
+                const maxAvailable = areaData ? (areaData.capacity - areaData.bookedCount) : 0;
+                
+                if (count < 0 || isNaN(count)) { // Sørg for minimum 0
+                    count = 0;
+                    inputElement.value = 0;
+                } else if (count > maxAvailable) { // Respekter max kapacitet
+                    count = maxAvailable;
+                    inputElement.value = maxAvailable;
+                    alert(`Du kan maksimalt vælge ${maxAvailable} billetter til ${areaName}.`);
+                }
+
+                if (count > 0) {
                     SeatSelectionView.selectedSeats[areaId] = {
                         id: areaId,
                         areaName: areaName,
                         price: price,
-                        count: 1, // Vælg 1 billet som standard
+                        count: count,
                         type: 'standing'
                     };
-                    standingAreaElement.classList.add('selected');
+                } else {
+                    delete SeatSelectionView.selectedSeats[areaId];
                 }
                 SeatSelectionView.updateOrderSummary();
             });
