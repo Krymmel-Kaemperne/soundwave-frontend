@@ -10,12 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
         EventOverviewView.afterRender(); // Og kald afterRender for at sætte listeners
     });
 
-    document.getElementById('nav-show-admin').addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage('admin-panel-page');
-        AdminPanelView.render(); // Kald render for admin-panel
-        AdminPanelView.afterRender();
-    });
+    
+  document.getElementById('nav-show-admin').addEventListener('click', (e) => {
+    e.preventDefault();
+    showPage('admin-panel-page');
+    AdminPanelView.render();
+    AdminPanelView.afterRender();
+  });
 
     // Start applikationen ved at vise Event Oversigt som standard
     showPage('event-overview-page');
