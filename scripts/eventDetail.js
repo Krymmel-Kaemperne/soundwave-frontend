@@ -3,7 +3,7 @@ const EventDetailView = {
     const container = document.getElementById("event-detail-content");
 
     try {
-      const response = await fetch("/eventmock.json");
+      const response = await fetch("http://localhost:8080/events");
       if (!response.ok) {
         throw new Error("Kunne ikke hente event detaljer.");
       }
