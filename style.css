@@ -271,3 +271,233 @@ header .logo {
     font-weight: 700;
 }
 
+/* Generel styling for Seat Selection Page (NYT/OPDATERET) */
+#seat-selection-page {
+    /* Padding flyttet til wrapper for at have fuld kontrol */
+}
+
+.seat-selection-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Stabel header og indhold under hinanden */
+    gap: 30px;
+}
+
+.seat-selection-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Skubber knap til venstre og titel til midten */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.seat-selection-header h2 {
+    flex-grow: 1; /* Giver overskriften plads i midten */
+    margin: 0;
+    color: #36506b;
+}
+
+.seat-map-and-summary-container {
+    display: flex;
+    flex-wrap: wrap; /* Tillad wrap på mindre skærme */
+    gap: 30px;
+}
+
+.seat-map-main-area { /* Dette er nu det tidligere #seat-map-container */
+    flex: 2;
+    min-width: 60%; /* Tager minimum 60% bredde */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.order-summary-area { /* Dette er nu det tidligere #order-summary */
+    flex: 1;
+    min-width: 300px; /* Minimum bredde for sidepanelet */
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
+    align-self: flex-start; /* Får den til at holde sig i toppen af flex-containeren */
+}
+
+/* Resten af din CSS for .area-container, .area-name, .seat-grid, .seat-row, .seat, .standing-area-box, .sold-out-text, .action-button */
+/* ... (Denne del er uændret fra tidligere og skal inkluderes) ... */
+
+/* Sæde-grid styling */
+/* Sæde-grid styling */
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Standard mellemrum mellem rækker */
+    padding: 10px 0;
+    align-items: flex-start; /* Ensure rows start at the same point */
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    /* Fjernet gap her - sæderne styrer deres eget mellemrum med margin */
+}
+
+.seat-row span {
+    font-weight: bold;
+    color: #4E5B69;
+    min-width: 70px; /* Sørg for at rækkenumre flugter */
+    text-align: right;
+    margin-right: 15px; /* Øget mellemrum til sæderne */
+    flex-shrink: 0; /* Forhindrer rækkenummer i at blive presset sammen */
+}
+
+.seat {
+    width: 32px; /* Cirkelstørrelse - lidt større */
+    height: 32px;
+    line-height: 32px; /* Centrerer teksten vertikalt */
+    text-align: center; /* Centrerer teksten horisontalt */
+    border-radius: 50%;
+    display: inline-block; /* Brug inline-block for at bevare layoutet med gap */
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+    margin: 0 4px; /* Konsekvent horisontalt mellemrum mellem sæder */
+    box-sizing: border-box; /* Inkluder border og padding i bredden */
+}
+
+/* **NYT: Fikser eventuel alignment-forskydning** */
+/* Dette sikrer at selvom tallene 1 og 10 fylder forskelligt,
+   så bliver sædet stadig en fast bredde og teksten centreret */
+.seat span { /* Hvis du havde span inde i sædet - ellers er det ikke nødvendigt */
+    display: block; /* Gør spændet til en blok for at det fylder hele sædet */
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 32px;
+}
+
+.seat.available {
+    background-color: #8BC34A; /* Grøn */
+    color: white;
+}
+
+.seat.available:hover {
+    background-color: #689F38;
+    transform: scale(1.1);
+}
+
+.seat.booked {
+    background-color: #B0BEC5; /* Grå */
+    color: #607D8B;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.seat.selected {
+    background-color: #2196F3; /* Blå */
+    color: white;
+    border: 2px solid #1565C0;
+    box-shadow: 0 0 8px rgba(33, 150, 243, 0.5);
+}
+
+/* Ståpladser styling */
+/* Ståpladser styling */
+.standing-area-box {
+    background-color: #E0F2F7; /* Lys blå baggrund */
+    border: 2px solid #B2EBF2; /* Lidt tykkere border */
+    border-radius: 8px;
+    padding: 25px; /* Lidt mere padding */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    cursor: pointer; /* Gør den tydeligt klikbar */
+    transition: all 0.2s ease-in-out;
+    position: relative; /* Til eventuel selected-tekst */
+}
+
+.standing-area-box:hover:not(.sold-out) {
+    background-color: #B2EBF2; /* Lyser op ved hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.standing-area-box.sold-out {
+    opacity: 0.6;
+    background-color: #f2f2f2;
+    cursor: not-allowed;
+    border-color: #ccc;
+}
+
+.standing-area-box.selected {
+    background-color: #2196F3; /* Blå, når den er valgt */
+    color: white;
+    border-color: #1565C0;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.7);
+}
+
+.standing-area-box.selected .standing-info p,
+.standing-area-box.selected h3 {
+    color: white; /* Hvid tekst når valgt */
+}
+
+.standing-info h3 {
+    color: #36506b;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.standing-info p {
+    margin: 5px 0;
+    color: #4E5B69;
+}
+
+.standing-area-box.selected .standing-selected-text {
+    display: block; /* Vis teksten "Valgt!" når valgt */
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+/* Skjul inputfelt-området, da det er fjernet */
+.standing-input {
+    display: none;
+}
+
+/* Nyt for den valgte tekst i ståplads-boksen */
+.standing-selected-text {
+    display: none; /* Skjult som standard */
+    font-weight: bold;
+    color: #fff; /* Hvid tekst når valgt */
+    margin-top: 10px;
+}
+
+/* Order Summary Styling */
+#order-summary h3 {
+    color: #36506b;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+#selected-seats-list li {
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+    color: #4E5B69;
+}
+#selected-seats-list li:last-child {
+    border-bottom: none;
+}
+#total-price {
+    color: #3A87E8; /* En accentfarve for totalpris */
+    font-size: 1.4rem;
+}
+
+.sold-out-text {
+    font-weight: bold;
+    color: #cc0000;
+}

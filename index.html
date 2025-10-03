@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
   <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -11,9 +11,8 @@
   <body>
     <header>
           <nav class="main-nav">
-              <a href="#" id="nav-show-events">Events</a> 
+              <a href="#" id="nav-show-events">Events</a>
               <a href="#" id="nav-show-admin">Admin</a>
-              <!-- Flere links hvis vi har (om os, kontakt, etc.) -->
           </nav>
     </header>
 
@@ -21,48 +20,38 @@
           <!-- Hver af disse divs repræsenterer en "side" eller et "view" -->
           <!-- CSS vil styre hvilken der er synlig: display: none/block -->
 
-          <main>
-              <div id="event-overview-page" class="page-view active">
-                  
-                  <!-- === Hero Section === -->
-                  <section class="hero-section" id="hero-section">
-                    <h1 class="hero-title">SoundWave</h1>
-                  </section>
+          <!-- === EVENT OVERVIEW PAGE === -->
+          <div id="event-overview-page" class="page-view active">
+              <!-- === Hero Section === -->
+              <section class="hero-section" id="hero-section">
+                <h1 class="hero-title">SoundWave</h1>
+              </section>
 
-                  <div id="overview-content-container">
-                      <p>Loading events...</p>
-                  </div>
-
+              <!-- Dette er den ENESTE div, hvor EventOverviewView.render() indsætter sit indhold. -->
+              <div id="overview-content-container">
+                  <!-- JavaScript indsætter overskrift og event-grid her. Starter med en loading-besked. -->
+                  <p style="text-align: center;">Henter events...</p>
               </div>
+          </div>
 
-          </main>
-
+          <!-- === EVENT DETAIL PAGE === -->
           <div id="event-detail-page" class="page-view">
-              <!-- Indhold til event-detaljer kommer her -->
-              <button id="detail-back-button">Tilbage til oversigt</button>
               <div id="event-detail-content">
                   <p>Loading event details...</p>
               </div>
           </div>
 
+          <!-- === ADMIN PANEL PAGE === -->
           <div id="admin-panel-page" class="page-view">
               <p>Loading Admin Panel...</p>
           </div>
 
+          <!-- === SEAT SELECTION PAGE === -->
           <div id="seat-selection-page" class="page-view">
-              <h2>Vælg Sæder</h2>
-              <button id="seat-selection-back-button">Tilbage til event-detaljer</button>
-              <div id="seat-map-container">
-                  <p>Loading seat map...</p>
-              </div>
-              <div id="order-summary">
-                  <h3>Din bestilling</h3>
-                  <ul id="selected-seats-list"></ul>
-                  <p>Total: <span id="total-price">0</span> DKK</p>
-                  <button id="proceed-to-checkout-button">Gå til betaling</button>
-              </div>
-          </div>
+                <p style="text-align: center;">Indlæser sædevalg...</p>
+            </div> 
 
+          <!-- === CHECKOUT PAGE === -->
           <div id="checkout-page" class="page-view">
               <h2>Gennemfør Køb</h2>
               <button id="checkout-back-button">Tilbage til sædevalg</button>
@@ -71,7 +60,8 @@
               </div>
           </div>
 
-      </main>
+    </main>
+
     <footer class="main-footer">
           <div class="footer-section title">
             <h1>Soundwave</h1>
