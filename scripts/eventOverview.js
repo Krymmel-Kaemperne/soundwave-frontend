@@ -27,7 +27,7 @@ const EventOverviewView = {
             if (sliderEvents.length > 0) {
                 // 2. Byg HTML for hver "slide"
                 sliderEvents.forEach(event => {
-                    const slideImage = event.imageUrl || '/images/placeholder.png';
+                    const slideImage = event.imageUrl ? (event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl) : '/images/placeholder.png';
                     slidesHtml += `
                         <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${slideImage}')">
                             <div class="slide-content">
@@ -69,7 +69,7 @@ const EventOverviewView = {
 
                     eventsGridHtml += `
                         <div class="event-card ${soldOutClass}" ${clickAction} style="${cursorStyle}">
-                            <img src="${event.imageUrl || '/images/placeholder.jpg'}" alt="${event.title}" class="event-card-image">
+                            <img src="${event.imageUrl ? (event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl) : '/images/placeholder.jpg'}" alt="${event.title}" class="event-card-image">
                             <div class="event-card-info">
                                 <h3>${event.title}</h3>
                                 <p><strong>Dato:</strong> ${formattedDate} kl. ${formattedTime}</p>
