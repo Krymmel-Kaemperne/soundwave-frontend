@@ -144,7 +144,6 @@ header {
 /* styling for event-form */
 
 #admin-panel-page {
-  display: flex;
   justify-content: center; /* centrer vandret */
   align-items: flex-start; /* juster lodret (kan være center også) */
   min-height: 80vh;        /* så der er plads */
