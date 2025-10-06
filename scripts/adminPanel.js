@@ -132,25 +132,68 @@ const AdminPanelView = {
 
       // Hvis der er billede → upload først
       if (fileInput.files.length > 0) {
+        console.log("DEBUG: Starting image upload...");
+        console.log("DEBUG: File details:", {
+          name: fileInput.files[0].name,
+          size: fileInput.files[0].size,
+          type: fileInput.files[0].type
+        });
+        
+        // Check file size (limit to 10MB to match backend configuration)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (fileInput.files[0].size > maxSize) {
+          alert("Filen er for stor. Vælg venligst et billede under 10MB.");
+          return;
+        }
+        
         const fData = new FormData();
         fData.append("file", fileInput.files[0]);
+        
+        console.log("DEBUG: FormData created, sending request...");
 
-        fetch("http://localhost:8080/api/upload/image", { // backend upload endpoint
+        fetch("http://localhost:8080/upload/image", { // backend upload endpoint
           method: "POST",
+          mode: 'cors', // Explicitly set CORS mode
           body: fData
         })
           .then(res => {
-            if (!res.ok) throw new Error("Billed-upload fejlede");
+            console.log("DEBUG: Upload response received:", {
+              status: res.status,
+              statusText: res.statusText,
+              ok: res.ok,
+              headers: Object.fromEntries(res.headers.entries())
+            });
+            
+            if (!res.ok) {
+              console.error("DEBUG: Response not OK:", res.status, res.statusText);
+              if (res.status === 413) {
+                throw new Error("Filen er for stor. Vælg venligst et billede under 10MB.");
+              } else if (res.status === 0) {
+                throw new Error("CORS fejl: Backend er ikke konfigureret til at tillade anmodninger fra denne oprindelse.");
+              } else {
+                throw new Error(`Billed-upload fejlede med status: ${res.status} ${res.statusText}`);
+              }
+            }
             return res.text();
           })
           .then(fileName => {
+            console.log("DEBUG: Upload successful, filename:", fileName);
             sendEvent(fileName);
           })
           .catch(err => {
-            console.error(err);
-            alert("Fejl: kunne ikke uploade billede");
+            console.error("DEBUG: Upload error:", err);
+            
+            // Provide more user-friendly error messages
+            if (err.message.includes("CORS")) {
+              alert("CORS fejl: Kunne ikke uploade billede due til browser sikkerhedsindstillinger. Prøv at bruge en mindre fil eller kontakt systemadministratoren.");
+            } else if (err.message.includes("fetch")) {
+              alert("Netværksfejl: Kunne ikke oprette forbindelse til serveren. Tjek at backend kører på http://localhost:8080");
+            } else {
+              alert("Fejl: kunne ikke uploade billede. " + err.message);
+            }
           });
       } else {
+        console.log("DEBUG: No file selected, proceeding without image");
         sendEvent(null);
       }
 
@@ -165,7 +208,7 @@ const AdminPanelView = {
           imageUrl // her gemmer vi filnavnet fra backend
         };
 
-        fetch("http://localhost:8080/api/events", {
+        fetch("http://localhost:8080/events", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newEvent)
@@ -192,5 +235,6 @@ const AdminPanelView = {
       AdminPanelView.render();
       AdminPanelView.afterRender();
     });
-  }
+  },
+
 };

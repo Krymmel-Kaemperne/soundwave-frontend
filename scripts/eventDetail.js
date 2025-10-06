@@ -34,7 +34,7 @@ const EventDetailView = {
                 ${buttonHtml} <!-- Knap eller udsolgt-tekst -->
             </div>
             <div style="flex: 2; display: flex; justify-content: flex-end;">
-                ${event.imageUrl ? `<img src="${event.imageUrl}" alt="${event.title}" class="event-image" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>` : ""}
+                ${event.imageUrl ? `<img src="${event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl}" alt="${event.title}" class="event-image" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>` : ""}
             </div>
         </div>
       `;
