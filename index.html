@@ -1,108 +1,104 @@
 <!DOCTYPE html>
-  <html lang="en">
+<html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>SoundWave Arena - Frontend</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <header>
-          <nav class="main-nav">
-              <a href="#" id="nav-show-events">Events</a>
-              <a href="#" id="nav-show-admin">Admin</a>
-          </nav>
+      <nav class="main-nav">
+        <a href="#" id="nav-show-events">Events</a>
+        <a href="#" id="nav-show-admin">Admin</a>
+      </nav>
     </header>
 
     <main>
-          <!-- Hver af disse divs repræsenterer en "side" eller et "view" -->
-          <!-- CSS vil styre hvilken der er synlig: display: none/block -->
+      <!-- Hver af disse divs repræsenterer en "side" eller et "view" -->
+      <!-- CSS vil styre hvilken der er synlig: display: none/block -->
 
-          <!-- === EVENT OVERVIEW PAGE === -->
-        <div id="event-overview-page" class="page-view active">
+      <!-- === EVENT OVERVIEW PAGE === -->
+      <div id="event-overview-page" class="page-view active">
         <!-- === Hero Section === -->
         <section class="hero-section" id="hero-section">
-            <h1 class="hero-title">SoundWave</h1>
+          <h1 class="hero-title">SoundWave</h1>
         </section>
 
         <!-- Container hvor JS indsætter events -->
         <div id="overview-content-container">
-            <p style="text-align: center;">Henter events...</p>
+          <p style="text-align: center">Henter events...</p>
         </div>
+      </div>
+
+      <!-- === EVENT DETAIL PAGE === -->
+      <div id="event-detail-page" class="page-view">
+        <div id="event-detail-content">
+          <p>Loading event details...</p>
         </div>
+      </div>
 
-         <!-- === ADMIN PANEL PAGE === -->
-	      <div id="admin-panel-page" class="page-view"></div>          
+      <!-- === ADMIN PANEL PAGE === -->
+      <div id="admin-panel-page" class="page-view">
+        <p>Loading Admin Panel...</p>
+      </div>
+
+      <!-- === SEAT SELECTION PAGE === -->
+      <div id="seat-selection-page" class="page-view">
+        <p style="text-align: center">Indlæser sædevalg...</p>
+      </div>
+
+      <!-- === CHECKOUT PAGE === -->
+      <div id="checkout-page" class="page-view">
+        <h2>Gennemfør Køb</h2>
+        <button id="checkout-back-button" class="action-button">
+          &larr; Tilbage til sædevalg
+        </button>
+        <div id="checkout-form-container">
+          <p>Loading checkout form...</p>
         </div>
-
-          <!-- === EVENT DETAIL PAGE === -->
-          <div id="event-detail-page" class="page-view">
-              <div id="event-detail-content">
-                  <p>Loading event details...</p>
-              </div>
-          </div>
-
-          <!-- === ADMIN PANEL PAGE === -->
-          <div id="admin-panel-page" class="page-view">
-              <p>Loading Admin Panel...</p>
-          </div>
-
-          <!-- === SEAT SELECTION PAGE === -->
-          <div id="seat-selection-page" class="page-view">
-                <p style="text-align: center;">Indlæser sædevalg...</p>
-            </div> 
-
-          <!-- === CHECKOUT PAGE === -->
-          <div id="checkout-page" class="page-view">
-              <h2>Gennemfør Køb</h2>
-              <button id="checkout-back-button">Tilbage til sædevalg</button>
-              <div id="checkout-form-container">
-                  <p>Loading checkout form...</p>
-              </div>
-          </div>
-
-          
-
+      </div>
     </main>
 
     <footer class="main-footer">
-          <div class="footer-section title">
-            <h1>Soundwave</h1>
-          </div>
-          <div class="footer-section contact-info">
-              <h3>Kontakt Os</h3>
-              <p>Guldbergsgade 29N, 2200 København</p>
-              <p>+45 46 46 00 00</p>
-              <p>info@soundwave.com</p>
-          </div>
-          <div class="footer-section social-media">
-              <h3>Følg Os</h3>
-              <a href="#" target="_blank">Facebook</a>
-              <a href="#" target="_blank">Instagram</a>
-              <a href="#" target="_blank">Spotify</a>
-          </div>
-          <div class="footer-section info-links">
-              <h3>Info</h3>
-              <a href="#">FAQ</a>
-              <a href="#">Privatlivspolitik</a>
-              <a href="#">Handelsbetingelser</a>
-          </div>
-      </footer>
+      <div class="footer-section title">
+        <h1>Soundwave</h1>
+      </div>
+      <div class="footer-section contact-info">
+        <h3>Kontakt Os</h3>
+        <p>Guldbergsgade 29N, 2200 København</p>
+        <p>+45 46 46 00 00</p>
+        <p>info@soundwave.com</p>
+      </div>
+      <div class="footer-section social-media">
+        <h3>Følg Os</h3>
+        <a href="#" target="_blank">Facebook</a>
+        <a href="#" target="_blank">Instagram</a>
+        <a href="#" target="_blank">Spotify</a>
+      </div>
+      <div class="footer-section info-links">
+        <h3>Info</h3>
+        <a href="#">FAQ</a>
+        <a href="#">Privatlivspolitik</a>
+        <a href="#">Handelsbetingelser</a>
+      </div>
+    </footer>
 
-      <div id="modal-overlay" class="modal-overlay">
-            <div id="standing-selection-modal" class="modal-content">
-            </div>
-        </div>
+    <div id="modal-overlay" class="modal-overlay">
+      <div id="standing-selection-modal" class="modal-content"></div>
+    </div>
 
-
-      <script src="scripts/global.js"></script>
-      <script src="scripts/eventOverview.js"></script>
-      <script src="scripts/eventDetail.js"></script>
-      <script src="scripts/seatSelection.js"></script>
-      <script src="scripts/checkout.js"></script>
-      <script src="scripts/adminPanel.js"></script>
-      <script src="scripts/main.js"></script>
+    <script src="scripts/global.js"></script>
+    <script src="scripts/eventOverview.js"></script>
+    <script src="scripts/eventDetail.js"></script>
+    <script src="scripts/seatSelection.js"></script>
+    <script src="scripts/checkout.js"></script>
+    <script src="scripts/adminPanel.js"></script>
+    <script src="scripts/main.js"></script>
   </body>
-  </html>
+</html>

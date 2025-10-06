@@ -828,3 +828,129 @@ header {
 .footer-section a:hover {
     color: #3A87E8;
 }
+
+/* ---  Checkout Page Styling --- */
+#checkout-page {
+
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 30px;
+    background-color: #fffdf9;
+    max-width: 700px;
+        /* side-content bredde */
+        margin: 20px auto;
+        /* centrerer hele sektionen */
+}
+
+#checkout-form-container {
+    margin: 30px auto;
+    padding: 30px 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+#checkout-form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#checkout-form-container label {
+    font-weight: 600;
+    color: #4E5B69;
+    margin-bottom: 5px;
+}
+
+#checkout-form-container p {
+    
+    margin-bottom: 25px;
+}
+
+#checkout-form-container input[type='text'] {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#checkout-form-container input[type='text']:focus {
+    border-color: #FFC784;
+    box-shadow: 0 0 5px rgba(255, 199, 132, 0.4);
+    outline: none;
+}
+
+/* Bekræft køb knappen */
+#checkout-form-container button {
+    width: 100%;
+}
+
+/* Success besked */
+.checkout-success-message {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+#cardNumber {
+    margin-bottom: 16px;
+    /* justér tallet for mere/mindre plads */
+}
+
+#expiry {
+    margin-top: 6px;
+    margin-bottom: 10px;
+    /* ekstra luft indeni feltet hvis du vil */
+}
+
+
+
+
+
+.card-icons-row {
+    display: flex;
+    align-items: center;
+    /* <– lodret flugt */
+    gap: 20px;
+    /* <– afstand mellem tekst og billeder */
+    margin-top: 6px;
+    /* <– lidt luft efter label */
+}
+
+.secure-payment {
+    font-size: 12px;
+    color: grey;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    white-space: nowrap;
+
+    position: relative;
+    top: 12px;
+    /* teksten længere ned */
+}
+
+.card-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-icons img {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+     border: 1px solid #ccc;     /* tynd lysegrå kant */
+  border-radius: 4px;         /* blødere hjørner */
+
+}
