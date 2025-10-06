@@ -487,17 +487,7 @@ header {
     gap: 5px; /* Mellemrum mellem rækker */
 }
 
-/* --- Siddepladser Styling --- */
-.seating-area-grid {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Mellemrum mellem rækker */
-}
+
 
 /* Holder på en hel række (nummer + sæder) */
 .seat-row-wrapper {
