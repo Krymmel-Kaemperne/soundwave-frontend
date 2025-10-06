@@ -284,10 +284,8 @@ header {
     flex: 2;
     min-width: 60%;
     background-color: #fff;
-    border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
 }
@@ -382,11 +380,8 @@ header {
 .vip-back .area-container {
     width: 90%; 
     max-width: 1000px; 
-    background-color: #fff; 
-    border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     display: flex;
     flex-direction: column;
     gap: 10px; 
@@ -561,6 +556,11 @@ header {
     cursor: pointer;
     margin: 2px; 
     transition: all 0.2s ease-in-out;
+    flex-shrink: 0;
+    border-radius: 4px; 
+    margin: 2px;
+    box-sizing: border-box;
+    border:2px solid transparent;
 }
 
 .seat.available {
@@ -595,6 +595,7 @@ header {
     position: sticky;
     top: 20px;
     align-self: flex-start;
+    margin: 20px;
 }
 #order-summary h3 {
     color: #36506b;
@@ -827,4 +828,71 @@ header {
 }
 .footer-section a:hover {
     color: #3A87E8;
+}
+
+
+/* === CONFERENCE HALL LAYOUT === */
+.arena-visual-layout.conference-layout {
+  max-width: unset; /* Giver plads til de mange sæder */
+  max-width: 100%;
+  background-color: #e8eaf6; /* Lidt mere formel farve */
+  padding: 0;
+}
+
+.conference-layout .scene-box {
+  background-color: #3f51b5; /* Mørkeblå, passer til farven */
+  width: 50%;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+.conference-seating-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 15px; /* Indre padding */
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.conference-layout .seating-area-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0; /* Mellemrum mellem seat-row-wrappers (hvis der var flere) */
+}
+
+.conference-layout .seat-row-wrapper {
+    display: flex; /* For at holde rækkenummer og sæder samlet på én linje */
+    justify-content: center; /* Centrer rækkerne i den ydre container */
+    align-items: center;
+    width: 100%; /* Sørg for at wrapperen strækker sig */
+    box-sizing: border-box; /* Inkluder padding i bredden */
+}
+
+.conference-layout .seat-row-grid {
+    display: flex; /* Gør sæderne til flex-items for at undgå at de knækker */
+    flex-wrap: nowrap; /* VIGTIGT: Hold sæderne på én linje */
+    justify-content: center; /* Centrer sæderne indeni rækken */
+}
+
+/* Styling for sæderne - Gør dem lidt mindre */
+.conference-layout .seat {
+  width: 20px; /* Mindre sæder */
+  height: 20px; /* Mindre sæder */
+  border-radius: 4px; /* Firkantede sæder */
+  font-size: 0.65rem; /* Mindre tekst */
+  margin: 1px; /* Mindre mellemrum */
+  flex-shrink: 0; /* VIGTIGT: Sæderne skal ikke skrumpe */
+}
+
+/* Midtergangen efter sæde nr. 15 (eller 16 for at være symmetrisk med 30 sæder) */
+.conference-layout .seat-row-grid div:nth-child(15) {
+  margin-right: 20px; /* Skaber et tomrum efter sæde 15 for midtergangen */
+}
+.conference-layout .seat.selected {
+  background-color: #2196f3; /* Blå baggrund */
+  color: white; /* Hvid tekst */
+  border: 2px solid #1565c0; /* Mørkere blå kant */
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.5); /* Blå glød */
 }
