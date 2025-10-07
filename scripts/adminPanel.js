@@ -1,7 +1,12 @@
 // scripts/adminPanel.js
 
+// === KONFIGURATION ===
+const API_URL = "http://localhost:8080";
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 const AdminPanelView = {
-  // Standard admin panel med events tabel som dashboard
+  // === DASHBOARD RENDERING ===
+  // Viser hovedoversigten med event-tabel
   render: () => {
     const pageContainer = document.getElementById("admin-panel-page");
     if (!pageContainer) {
@@ -25,13 +30,11 @@ const AdminPanelView = {
       </div>
     `;
 
-    // Load events table immediately
     AdminPanelView.loadEventsTable();
   },
 
-  // Binder knapper
+  // Tilføjer event listeners til dashboard-knapper
   afterRender: () => {
-    // Tilbage
     const backButton = document.getElementById("admin-back-button");
     if (backButton) {
       backButton.addEventListener("click", () => {
@@ -41,225 +44,222 @@ const AdminPanelView = {
       });
     }
 
-    // Opret event
     const createEventBtn = document.getElementById("create-event-btn");
     if (createEventBtn) {
       createEventBtn.addEventListener("click", () => {
-        AdminPanelView.showCreateForm();
+        AdminPanelView.showEventForm();
       });
     }
   },
 
-  // Viser create form (hele panelet erstattes)
-  showCreateForm: () => {
+  // === EVENT FORMULAR ===
+  // Viser formular til oprettelse eller redigering af event
+  showEventForm: (event = null) => {
+    const isEdit = event !== null;
     const pageContainer = document.getElementById("admin-panel-page");
+    
     pageContainer.innerHTML = `
       <div class="admin-panel">
         <div class="admin-header">
-          <h2>Opret Event</h2>
+          <h2>${isEdit ? 'Rediger' : 'Opret'} Event</h2>
           <div class="admin-actions">
-            <button type="button" id="cancel-create-event" class="action-button">Tilbage</button>
+            <button type="button" id="cancel-form" class="action-button">Tilbage</button>
           </div>
         </div>
         <div id="form-errors" class="error-box"></div>
 
-        <form id="create-event-form" class="event-form">
+        <form id="event-form" class="event-form">
           <div class="form-group">
             <label for="event-title">Titel</label>
-            <input type="text" id="event-title" required>
+            <input type="text" id="event-title" value="${event?.title || ''}" required>
           </div>
 
           <div class="form-group">
             <label for="event-status">Status</label>
             <select id="event-status" required>
-              <option value="">-- Vælg status --</option>
-              <option value="PLANNED">Planlagt</option>
-              <option value="Scheduled">Aktiv</option>
-              <option value="CANCELLED">Aflyst</option>
+              ${!isEdit ? '<option value="">-- Vælg status --</option>' : ''}
+              <option value="PLANNED" ${event?.status === 'PLANNED' ? 'selected' : ''}>Planlagt</option>
+              <option value="Scheduled" ${event?.status === 'Scheduled' ? 'selected' : ''}>Aktiv</option>
+              ${isEdit ? `<option value="Sold Out" ${event?.status === 'Sold Out' ? 'selected' : ''}>Udsolgt</option>` : ''}
+              <option value="CANCELLED" ${event?.status === 'CANCELLED' ? 'selected' : ''}>Aflyst</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="event-description">Beskrivelse</label>
-            <textarea id="event-description" rows="3" required></textarea>
+            <textarea id="event-description" rows="3" required>${event?.description || ''}</textarea>
           </div>
 
           <div class="form-group">
             <label for="event-date">Dato og tid</label>
-            <input type="datetime-local" id="event-date" required>
+            <input type="datetime-local" id="event-date" value="${event ? event.eventDate.slice(0, 16) : ''}" required>
           </div>
 
           <div class="form-group">
             <label for="event-price">Basispris (DKK)</label>
-            <input type="number" id="event-price" min="0" step="0.01" required>
+            <input type="number" id="event-price" value="${event?.basePrice || ''}" min="0" step="0.01" required>
           </div>
 
           <div class="form-group">
             <label for="event-hall">Sal</label>
             <select id="event-hall" required>
-              <option value="">-- Vælg Sal --</option>
-              <option value="1">Arena</option>
-              <option value="2">Konference</option>
+              ${!isEdit ? '<option value="">-- Vælg Sal --</option>' : ''}
+              <option value="1" ${event?.hall?.hallId === 1 ? 'selected' : ''}>Arena</option>
+              <option value="2" ${event?.hall?.hallId === 2 ? 'selected' : ''}>Konference</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="event-image">Billede</label>
             <input type="file" id="event-image" accept="image/*">
-            <small>Upload et billede til eventet (valgfrit)</small>
+            <small>Upload et ${isEdit ? 'nyt ' : ''}billede${isEdit ? ' for at erstatte det eksisterende' : ' til eventet'} (valgfrit)</small>
+            ${event?.imageUrl ? `<div style="margin-top: 10px;"><small>Nuværende billede: ${event.imageUrl}</small></div>` : ''}
+          </div>
+
+          <div class="form-group">
+            <label for="event-visibility">Synlighed</label>
+            <div class="visibility-toggle">
+              <input type="checkbox" id="event-visibility" ${event?.isVisible !== false ? 'checked' : ''}>
+              <label for="event-visibility" class="toggle-label">
+                <span class="toggle-slider"></span>
+                <span class="toggle-text">Event er synligt for brugere</span>
+              </label>
+            </div>
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="action-button">Gem Event</button>
+            <button type="submit" class="action-button">${isEdit ? 'Gem Ændringer' : 'Gem Event'}</button>
           </div>
         </form>
       </div>
     `;
 
-    const form = document.getElementById("create-event-form");
-    const errorBox = document.getElementById("form-errors");
-
-    form.addEventListener("submit", (e) => {
+    document.getElementById("event-form").addEventListener("submit", (e) => {
       e.preventDefault();
-
-      const title = document.getElementById("event-title").value.trim();
-      const description = document.getElementById("event-description").value.trim();
-      const status = document.getElementById("event-status").value;
-      const eventDate = document.getElementById("event-date").value;
-      const basePrice = document.getElementById("event-price").value;
-      const hallId = document.getElementById("event-hall").value;
-      const fileInput = document.getElementById("event-image");
-
-      let errors = [];
-      if (!title) errors.push("Titel skal udfyldes.");
-      if (!description) errors.push("Beskrivelse skal udfyldes.");
-      if (!status) errors.push("Status skal vælges.");
-      if (!eventDate) errors.push("Dato og tid skal vælges.");
-      if (!basePrice || parseFloat(basePrice) <= 0) errors.push("Basispris skal være større end 0.");
-      if (!hallId) errors.push("Sal skal vælges.");
-
-      if (errors.length > 0) {
-        errorBox.innerHTML = errors.join("<br>");
-        return;
-      }
-      errorBox.innerHTML = "";
-
-      // Hvis der er billede → upload først
-      if (fileInput.files.length > 0) {
-        console.log("DEBUG: Starting image upload...");
-        console.log("DEBUG: File details:", {
-          name: fileInput.files[0].name,
-          size: fileInput.files[0].size,
-          type: fileInput.files[0].type
-        });
-        
-        // Check file size (limit to 10MB to match backend configuration)
-        const maxSize = 10 * 1024 * 1024; // 10MB
-        if (fileInput.files[0].size > maxSize) {
-          alert("Filen er for stor. Vælg venligst et billede under 10MB.");
-          return;
-        }
-        
-        const fData = new FormData();
-        fData.append("file", fileInput.files[0]);
-        
-        console.log("DEBUG: FormData created, sending request...");
-
-        fetch("http://localhost:8080/upload/image", { // backend upload endpoint
-          method: "POST",
-          mode: 'cors', // Explicitly set CORS mode
-          body: fData
-        })
-          .then(res => {
-            console.log("DEBUG: Upload response received:", {
-              status: res.status,
-              statusText: res.statusText,
-              ok: res.ok,
-              headers: Object.fromEntries(res.headers.entries())
-            });
-            
-            if (!res.ok) {
-              console.error("DEBUG: Response not OK:", res.status, res.statusText);
-              if (res.status === 413) {
-                throw new Error("Filen er for stor. Vælg venligst et billede under 10MB.");
-              } else if (res.status === 0) {
-                throw new Error("CORS fejl: Backend er ikke konfigureret til at tillade anmodninger fra denne oprindelse.");
-              } else {
-                throw new Error(`Billed-upload fejlede med status: ${res.status} ${res.statusText}`);
-              }
-            }
-            return res.text();
-          })
-          .then(fileName => {
-            console.log("DEBUG: Upload successful, filename:", fileName);
-            sendEvent(fileName);
-          })
-          .catch(err => {
-            console.error("DEBUG: Upload error:", err);
-            
-            // Provide more user-friendly error messages
-            if (err.message.includes("CORS")) {
-              alert("CORS fejl: Kunne ikke uploade billede due til browser sikkerhedsindstillinger. Prøv at bruge en mindre fil eller kontakt systemadministratoren.");
-            } else if (err.message.includes("fetch")) {
-              alert("Netværksfejl: Kunne ikke oprette forbindelse til serveren. Tjek at backend kører på http://localhost:8080");
-            } else {
-              alert("Fejl: kunne ikke uploade billede. " + err.message);
-            }
-          });
-      } else {
-        console.log("DEBUG: No file selected, proceeding without image");
-        sendEvent(null);
-      }
-
-      function sendEvent(imageUrl) {
-        const newEvent = {
-          title,
-          description,
-          status,
-          eventDate,
-          basePrice: parseFloat(basePrice),
-          hall: { hallId: parseInt(hallId) },
-          imageUrl // her gemmer vi filnavnet fra backend
-        };
-
-        fetch("http://localhost:8080/events", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newEvent)
-        })
-          .then(res => {
-            if (!res.ok) throw new Error("Kunne ikke oprette event");
-            return res.json();
-          })
-          .then(savedEvent => {
-            alert("Event oprettet: " + savedEvent.title);
-            AdminPanelView.render();
-            AdminPanelView.afterRender();
-          })
-          .catch(err => {
-            console.error(err);
-            alert("Fejl: kunne ikke gemme event.");
-          });
-      }
+      AdminPanelView.saveEvent(event?.eventId);
     });
 
-    // Cancel → tilbage til knapper
-    const cancelBtn = document.getElementById("cancel-create-event");
-    cancelBtn.addEventListener("click", () => {
-      AdminPanelView.render();
-      AdminPanelView.afterRender();
+    document.getElementById("cancel-form").addEventListener("click", () => {
+      AdminPanelView.navigateToDashboard();
     });
   },
 
-  // Indlæser events tabel til dashboard
+  // Henter event-data og viser redigeringsformular
+  showEditForm: async (eventId) => {
+    try {
+      const event = await AdminPanelView.fetchEvent(eventId);
+      AdminPanelView.showEventForm(event);
+    } catch (error) {
+      alert(`Fejl: ${error.message}`);
+    }
+  },
+
+  // === GEMME EVENT ===
+  // Opretter eller opdaterer et event
+  saveEvent: async (eventId) => {
+    const formData = AdminPanelView.getFormData();
+    const errors = AdminPanelView.validateForm(formData);
+    
+    if (errors.length > 0) {
+      document.getElementById("form-errors").innerHTML = errors.join("<br>");
+      return;
+    }
+    
+    document.getElementById("form-errors").innerHTML = "";
+
+    try {
+      let imageUrl = eventId ? (await AdminPanelView.fetchEvent(eventId)).imageUrl : null;
+      
+      if (formData.fileInput.files.length > 0) {
+        imageUrl = await AdminPanelView.uploadImage(formData.fileInput.files[0]);
+      }
+
+      const eventData = {
+        title: formData.title,
+        description: formData.description,
+        status: formData.status,
+        eventDate: formData.eventDate,
+        basePrice: parseFloat(formData.basePrice),
+        hall: { hallId: parseInt(formData.hallId) },
+        imageUrl,
+        isVisible: formData.isVisible
+      };
+
+      const url = eventId ? `${API_URL}/events/${eventId}` : `${API_URL}/events`;
+      const method = eventId ? "PUT" : "POST";
+      
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData)
+      });
+
+      if (!response.ok) throw new Error("Kunne ikke gemme event");
+
+      AdminPanelView.navigateToDashboard();
+    } catch (error) {
+      alert(`Fejl: ${error.message}`);
+    }
+  },
+
+  // === FORMULAR HJÆLPEFUNKTIONER ===
+  // Henter værdier fra formularen
+  getFormData: () => ({
+    title: document.getElementById("event-title").value.trim(),
+    description: document.getElementById("event-description").value.trim(),
+    status: document.getElementById("event-status").value,
+    eventDate: document.getElementById("event-date").value,
+    basePrice: document.getElementById("event-price").value,
+    hallId: document.getElementById("event-hall").value,
+    fileInput: document.getElementById("event-image"),
+    isVisible: document.getElementById("event-visibility").checked
+  }),
+
+  // Validerer formulardata
+  validateForm: (data) => {
+    const errors = [];
+    if (!data.title) errors.push("Titel skal udfyldes.");
+    if (!data.description) errors.push("Beskrivelse skal udfyldes.");
+    if (!data.status) errors.push("Status skal vælges.");
+    if (!data.eventDate) errors.push("Dato og tid skal vælges.");
+    if (!data.basePrice || parseFloat(data.basePrice) <= 0) errors.push("Basispris skal være større end 0.");
+    if (!data.hallId) errors.push("Sal skal vælges.");
+    return errors;
+  },
+
+  // === BILLEDE UPLOAD ===
+  // Uploader billede til serveren
+  uploadImage: async (file) => {
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error("Filen er for stor. Vælg venligst et billede under 10MB.");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(`${API_URL}/upload/image`, {
+      method: "POST",
+      mode: 'cors',
+      body: formData
+    });
+
+    if (!response.ok) {
+      if (response.status === 413) {
+        throw new Error("Filen er for stor. Vælg venligst et billede under 10MB.");
+      }
+      throw new Error("Billed-upload fejlede");
+    }
+
+    return await response.text();
+  },
+
+  // === EVENTS TABEL ===
+  // Indlæser og viser tabel med alle events
   loadEventsTable: async () => {
     const eventsTableContainer = document.getElementById("events-table-container");
     
     try {
-      const response = await fetch("http://localhost:8080/events");
-      if (!response.ok) throw new Error("Kunne ikke hente events");
-      
-      const events = await response.json();
+      const events = await AdminPanelView.fetchEvents();
       
       if (events.length === 0) {
         eventsTableContainer.innerHTML = "<p>Ingen events fundet.</p>";
@@ -267,339 +267,132 @@ const AdminPanelView = {
       }
 
       let tableHtml = `
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <thead>
-              <tr style="background-color: #f2f2f2;">
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">ID</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Titel</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Dato</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Hal</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Pris</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Handlinger</th>
-              </tr>
-            </thead>
-            <tbody>
+        <table class="admin-events-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titel</th>
+              <th>Dato</th>
+              <th>Status</th>
+              <th>Hal</th>
+              <th>Pris</th>
+              <th>Handlinger</th>
+            </tr>
+          </thead>
+          <tbody>
       `;
 
       events.forEach(event => {
         const eventDate = new Date(event.eventDate).toLocaleDateString('da-DK');
-        const statusColor = event.status === 'Sold Out' ? 'color: red;' :
-                           event.status === 'Scheduled' ? 'color: green;' :
-                           'color: orange;';
+        const isVisible = event.isVisible !== undefined ? event.isVisible : true;
+        const statusClass = event.status === 'Sold Out' ? 'status-sold-out' :
+                           event.status === 'Scheduled' ? 'status-scheduled' : 'status-other';
         
         tableHtml += `
-          <tr>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${event.eventId}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${event.title}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${eventDate}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd; ${statusColor}">${event.status}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${event.hall ? event.hall.name : 'Ukendt'}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">${event.basePrice ? event.basePrice + ' DKK' : 'Ukendt'}</td>
-            <td style="padding: 12px; border-bottom: 1px solid #ddd;">
-              <button class="action-button view-event-btn" data-event-id="${event.eventId}" style="margin-right: 5px; padding: 5px 10px; font-size: 12px;">Vis</button>
-              <button class="action-button edit-event-btn" data-event-id="${event.eventId}" style="margin-right: 5px; padding: 5px 10px; font-size: 12px;">Rediger</button>
-              <button class="action-button cancel-event-btn" data-event-id="${event.eventId}" data-event-title="${event.title}" style="padding: 5px 10px; font-size: 12px; background-color: #f44336;">Aflys</button>
+          <tr class="${isVisible ? '' : 'event-hidden'}">
+            <td>${event.eventId}</td>
+            <td>${event.title}</td>
+            <td>${eventDate}</td>
+            <td class="${statusClass}">${event.status}</td>
+            <td>${event.hall?.name || 'Ukendt'}</td>
+            <td>${event.basePrice ? event.basePrice + ' DKK' : 'Ukendt'}</td>
+            <td>
+              <button class="btn-action btn-view" data-event-id="${event.eventId}">Vis</button>
+              <button class="btn-action btn-edit" data-event-id="${event.eventId}">Rediger</button>
+              <button class="btn-action btn-toggle" data-event-id="${event.eventId}" data-is-visible="${isVisible}">${isVisible ? 'Skjul' : 'Vis'}</button>
+              <button class="btn-action btn-cancel" data-event-id="${event.eventId}">Aflys</button>
             </td>
           </tr>
         `;
       });
 
-      tableHtml += `
-            </tbody>
-          </table>
-        </div>
-      `;
-      
+      tableHtml += `</tbody></table>`;
       eventsTableContainer.innerHTML = tableHtml;
 
-      // Tilføj event listeners til knapperne
-      document.querySelectorAll('.view-event-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const eventId = e.target.dataset.eventId;
+      // Event delegation - håndterer alle knap-klik i tabellen
+      eventsTableContainer.addEventListener('click', (e) => {
+        const eventId = e.target.dataset.eventId;
+        if (!eventId) return;
+
+        if (e.target.classList.contains('btn-view')) {
           showPage('event-detail-page');
           EventDetailView.render(eventId);
           EventDetailView.afterRender(eventId);
-        });
-      });
-
-      document.querySelectorAll('.edit-event-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const eventId = e.target.dataset.eventId;
+        } else if (e.target.classList.contains('btn-edit')) {
           AdminPanelView.showEditForm(eventId);
-        });
-      });
-
-      document.querySelectorAll('.cancel-event-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const eventId = e.target.dataset.eventId;
-          const eventTitle = e.target.dataset.eventTitle;
-          
-          if (confirm(`Er du sikker på, at du vil aflyse "${eventTitle}"? Dette vil ændre status til "CANCELLED".`)) {
-            AdminPanelView.cancelEvent(eventId, eventTitle);
-          }
-        });
+        } else if (e.target.classList.contains('btn-toggle')) {
+          AdminPanelView.toggleEventVisibility(eventId);
+        } else if (e.target.classList.contains('btn-cancel')) {
+          AdminPanelView.cancelEvent(eventId);
+        }
       });
 
     } catch (error) {
-      eventsTableContainer.innerHTML =
-        `<p style="color: red;">Fejl ved hentning af events: ${error.message}</p>`;
+      eventsTableContainer.innerHTML = `<p style="color: red;">Fejl ved hentning af events: ${error.message}</p>`;
     }
   },
 
-  // Viser form til at redigere et event
-  showEditForm: async (eventId) => {
-    const pageContainer = document.getElementById("admin-panel-page");
-    
-    pageContainer.innerHTML = `
-      <div class="admin-panel">
-        <h2>Rediger Event</h2>
-        <div id="form-errors" class="error-box"></div>
-        <p>Henter event data...</p>
-        <div class="form-actions">
-          <button type="button" id="cancel-edit-event" class="action-button">Annuller</button>
-        </div>
-      </div>
-    `;
+  // === API FUNKTIONER ===
+  // Henter alle events fra serveren
+  fetchEvents: async () => {
+    const response = await fetch(`${API_URL}/events`);
+    if (!response.ok) throw new Error("Kunne ikke hente events");
+    return await response.json();
+  },
 
+  // Henter et enkelt event fra serveren
+  fetchEvent: async (eventId) => {
+    const response = await fetch(`${API_URL}/events/${eventId}`);
+    if (!response.ok) throw new Error("Kunne ikke hente event");
+    return await response.json();
+  },
+
+  // Opdaterer specifikke felter på et event
+  updateEventField: async (eventId, updates) => {
     try {
-      const response = await fetch(`http://localhost:8080/events/${eventId}`);
-      if (!response.ok) throw new Error("Kunne ikke hente event");
+      const eventData = await AdminPanelView.fetchEvent(eventId);
+      const updatedEvent = { ...eventData, ...updates };
       
-      const event = await response.json();
-      
-      pageContainer.innerHTML = `
-        <div class="admin-panel">
-          <div class="admin-header">
-            <h2>Rediger Event</h2>
-            <div class="admin-actions">
-              <button type="button" id="cancel-edit-event" class="action-button">Tilbage</button>
-            </div>
-          </div>
-          <div id="form-errors" class="error-box"></div>
-
-          <form id="edit-event-form" class="event-form">
-            <div class="form-group">
-              <label for="edit-title">Titel</label>
-              <input type="text" id="edit-title" value="${event.title}" required>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-status">Status</label>
-              <select id="edit-status" required>
-                <option value="PLANNED" ${event.status === 'PLANNED' ? 'selected' : ''}>Planlagt</option>
-                <option value="Scheduled" ${event.status === 'Scheduled' ? 'selected' : ''}>Aktiv</option>
-                <option value="Sold Out" ${event.status === 'Sold Out' ? 'selected' : ''}>Udsolgt</option>
-                <option value="CANCELLED" ${event.status === 'CANCELLED' ? 'selected' : ''}>Aflyst</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-description">Beskrivelse</label>
-              <textarea id="edit-description" rows="4" required>${event.description}</textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-event-date">Event dato</label>
-              <input type="datetime-local" id="edit-event-date" value="${event.eventDate.slice(0, 16)}" required>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-base-price">Basispris (DKK)</label>
-              <input type="number" id="edit-base-price" value="${event.basePrice}" min="0" step="0.01" required>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-hall">Sal</label>
-              <select id="edit-hall" required>
-                <option value="1" ${event.hall && event.hall.hallId === 1 ? 'selected' : ''}>Arena</option>
-                <option value="2" ${event.hall && event.hall.hallId === 2 ? 'selected' : ''}>Konference</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="edit-image">Billede</label>
-              <input type="file" id="edit-image" accept="image/*">
-              <small>Upload et nyt billede for at erstatte det eksisterende (valgfrit)</small>
-              ${event.imageUrl ? `<div style="margin-top: 10px;"><small>Nuværende billede: ${event.imageUrl}</small></div>` : ''}
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="action-button">Gem Ændringer</button>
-            </div>
-          </form>
-        </div>
-      `;
-
-      // Form submit handler
-      const editForm = document.getElementById("edit-event-form");
-      editForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        AdminPanelView.updateEvent(eventId);
-      });
-
-    } catch (error) {
-      document.getElementById("form-errors").innerHTML = `Fejl: ${error.message}`;
-    }
-
-    // Cancel knap
-    const cancelBtn = document.getElementById("cancel-edit-event");
-    cancelBtn.addEventListener("click", () => {
-      AdminPanelView.render();
-      AdminPanelView.afterRender();
-    });
-  },
-
-  // Opdaterer et event
-  updateEvent: async (eventId) => {
-    const errorBox = document.getElementById("form-errors");
-    const title = document.getElementById("edit-title").value;
-    const description = document.getElementById("edit-description").value;
-    const status = document.getElementById("edit-status").value;
-    const eventDate = document.getElementById("edit-event-date").value;
-    const basePrice = document.getElementById("edit-base-price").value;
-    const hallId = document.getElementById("edit-hall").value;
-    const fileInput = document.getElementById("edit-image");
-
-    // Først hent den nuværende event data for at bevare imageUrl og hall
-    const getResponse = await fetch(`http://localhost:8080/events/${eventId}`);
-    if (!getResponse.ok) {
-      throw new Error("Kunne ikke hente event data");
-    }
-    
-    const eventData = await getResponse.json();
-
-    // Håndter billede upload hvis der er valgt et nyt billede
-    if (fileInput.files.length > 0) {
-      console.log("DEBUG: Starting image upload for edit...");
-      
-      // Check file size (limit to 10MB)
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      if (fileInput.files[0].size > maxSize) {
-        alert("Filen er for stor. Vælg venligst et billede under 10MB.");
-        return;
-      }
-      
-      const fData = new FormData();
-      fData.append("file", fileInput.files[0]);
-
-      try {
-        const uploadResponse = await fetch("http://localhost:8080/upload/image", {
-          method: "POST",
-          mode: 'cors',
-          body: fData
-        });
-
-        if (!uploadResponse.ok) {
-          throw new Error("Billed-upload fejlede");
-        }
-
-        const fileName = await uploadResponse.text();
-        console.log("DEBUG: Upload successful, filename:", fileName);
-        
-        // Opdater event med nyt billede
-        await updateEventWithImage(fileName);
-      } catch (err) {
-        console.error("DEBUG: Upload error:", err);
-        alert("Fejl: kunne ikke uploade billede. " + err.message);
-      }
-    } else {
-      // Opdater event uden nyt billede
-      await updateEventWithImage(eventData.imageUrl);
-    }
-
-    async function updateEventWithImage(imageUrl) {
-      try {
-        const response = await fetch(`http://localhost:8080/events/${eventId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title,
-            description,
-            status,
-            eventDate,
-            basePrice: parseFloat(basePrice),
-            hall: { hallId: parseInt(hallId) },
-            imageUrl // Bevar det eksisterende eller nye billede
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("Kunne ikke opdatere event");
-        }
-
-        alert("Event opdateret succesfuldt!");
-        AdminPanelView.render();
-        AdminPanelView.afterRender();
-        
-      } catch (error) {
-        errorBox.innerHTML = `Fejl: ${error.message}`;
-      }
-    }
-  },
-
-  // Aflyser et event (ændrer status til CANCELLED)
-  cancelEvent: async (eventId, eventTitle) => {
-    console.log(`DEBUG: Forsøger at aflyse event ${eventId} (${eventTitle})`);
-    
-    try {
-      // Først hent den nuværende event data
-      const getResponse = await fetch(`http://localhost:8080/events/${eventId}`);
-      if (!getResponse.ok) {
-        throw new Error("Kunne ikke hente event data");
-      }
-      
-      const eventData = await getResponse.json();
-      console.log(`DEBUG: Hentet event data:`, eventData);
-      
-      // Opdater kun status feltet, bevar alle andre data
-      const updatedEvent = {
-        ...eventData,
-        status: "CANCELLED"
-      };
-      
-      console.log(`DEBUG: Sender opdateret event:`, updatedEvent);
-      
-      const response = await fetch(`http://localhost:8080/events/${eventId}`, {
+      const response = await fetch(`${API_URL}/events/${eventId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedEvent)
       });
 
-      console.log(`DEBUG: Cancel response status: ${response.status} ${response.statusText}`);
-      console.log(`DEBUG: Cancel response ok: ${response.ok}`);
-
-      if (!response.ok) {
-        // Get more detailed error information
-        let errorMessage = `Kunne ikke aflyse event`;
-        
-        if (response.status === 404) {
-          errorMessage = `Event "${eventTitle}" blev ikke fundet.`;
-        } else if (response.status === 403) {
-          errorMessage = `Du har ikke tilladelse til at aflyse dette event.`;
-        } else {
-          errorMessage += ` (status: ${response.status})`;
-          try {
-            const errorText = await response.text();
-            console.log(`DEBUG: Error response body: ${errorText}`);
-            if (errorText) errorMessage += `: ${errorText}`;
-          } catch (e) {
-            console.log(`DEBUG: Kunne ikke læse error body: ${e.message}`);
-          }
-        }
-        
-        throw new Error(errorMessage);
-      }
-
-      console.log(`DEBUG: Event ${eventId} aflyst succesfuldt`);
-      alert(`Event "${eventTitle}" aflyst succesfuldt!`);
-      AdminPanelView.render();
-      AdminPanelView.afterRender();
+      if (!response.ok) throw new Error("Kunne ikke opdatere event");
       
+      AdminPanelView.navigateToDashboard();
     } catch (error) {
-      console.error(`DEBUG: Fejl ved aflysning af event:`, error);
-      alert(`Fejl ved aflysning af event: ${error.message}`);
+      alert(`Fejl: ${error.message}`);
     }
+  },
+
+  // === EVENT HANDLINGER ===
+  // Aflyser et event (sætter status til CANCELLED)
+  cancelEvent: async (eventId) => {
+    // Vis bekræftelsesdialog før aflysning
+    const isConfirmed = confirm("Er du sikker på, at du vil aflyse dette event? Denne handling kan ikke fortrydes.");
+    
+    if (isConfirmed) {
+      await AdminPanelView.updateEventField(eventId, { status: "CANCELLED" });
+    }
+  },
+
+  // Skifter synlighed for et event
+  toggleEventVisibility: async (eventId) => {
+    try {
+      const event = await AdminPanelView.fetchEvent(eventId);
+      const currentVisibility = event.isVisible !== undefined ? event.isVisible : true;
+      await AdminPanelView.updateEventField(eventId, { isVisible: !currentVisibility });
+    } catch (error) {
+      alert(`Fejl: ${error.message}`);
+    }
+  },
+
+  // === NAVIGATION ===
+  // Navigerer tilbage til dashboard
+  navigateToDashboard: () => {
+    AdminPanelView.render();
+    AdminPanelView.afterRender();
   }
 };
