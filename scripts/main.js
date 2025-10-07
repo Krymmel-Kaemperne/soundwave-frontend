@@ -23,3 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
     EventOverviewView.render(); 
     EventOverviewView.afterRender();
 });
+
+
+
