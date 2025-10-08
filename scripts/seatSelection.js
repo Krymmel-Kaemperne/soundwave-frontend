@@ -25,7 +25,7 @@ const SeatSelectionView = {
             SeatSelectionView.mockData = await response.json();
 
             // Bestem om det er Conference Hall baseret på hallName
-            const isConferenceHall = SeatSelectionView.mockData.hallName.includes("Club Stage");
+            const isConferenceHall = SeatSelectionView.mockData.hallName.includes("Konference Sal");
 
             let fullPageHtml = `
                 <div class="seat-selection-wrapper">
@@ -61,12 +61,35 @@ const SeatSelectionView = {
                             rows[rowNum]
                                 .sort((a, b) => a.seatNumber - b.seatNumber)
                                 .forEach((seat) => {
-                                    const seatClass =
-                                        seat.status === "booked" ? "seat booked" : "seat available";
-                                    const isSelectedClass = SeatSelectionView.selectedSeats[seat.seatId]
-                                        ? "selected"
-                                        : "";
-                                    conferenceHtml += `<div class="${seatClass} ${isSelectedClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${area.price}" title="Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${area.price} DKK">
+                                    const userSessionId = localStorage.getItem('userSessionId'); // Hent den aktuelle session ID
+                                    let seatClass = 'seat'; // Start med grundklasse
+                                    let isSelectedClass = '';
+                                    let titleText = `Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${area.price} DKK`;
+
+                                    // Bestem grundklassen baseret på status fra backend
+                                    if (seat.status === 'booked') {
+                                        seatClass += ' booked';
+                                        titleText += ' (Permanent booket)';
+                                    } else if (seat.status === 'held_by_other') {
+                                        seatClass += ' held-by-other';
+                                        titleText += ' (Midlertidigt holdt af anden)';
+                                    } else if (seat.status === 'held_by_me') { // Sæde holdt af den aktuelle bruger
+                                        seatClass += ' available selected';
+                                        isSelectedClass = 'selected';
+                                        titleText += ' (Valgt - Holdt af dig)';
+                                    } else { // seat.status === 'free'
+                                        seatClass += ' available';
+                                        titleText += ' (Ledig)';
+                                    }
+                                    
+                                    // Hvis sædet er valgt lokalt i `selectedSeats` (før et hold request er sendt), skal det også vises som valgt
+                                    if (SeatSelectionView.selectedSeats[seat.seatId] && seat.status === 'free') {
+                                        isSelectedClass = 'selected';
+                                        seatClass += ' selected';
+                                        titleText += ' (Valgt lokalt)';
+                                    }
+
+                                    conferenceHtml += `<div class="${seatClass} ${isSelectedClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${area.price}" title="${titleText}">
                                             ${seat.seatNumber}
                                         </div>`;
                                 });
@@ -102,7 +125,7 @@ const SeatSelectionView = {
                         const isStandingAreaBookedOut = availableTickets <= 0;
                         areaContentHtml += `<div class="standing-area-box ${
                             isStandingAreaBookedOut ? "sold-out" : ""
-                        }" data-area-id="${area.areaId}" data-price="${
+                        }" data-area-id="${area.areaId}" area-price="${
                             area.price
                         }" data-area-name="${area.areaName}" data-max-tickets="${availableTickets}" ${
                             isStandingAreaBookedOut ? "" : 'role="button" tabindex="0"'
@@ -129,12 +152,35 @@ const SeatSelectionView = {
                             rows[rowNum]
                                 .sort((a, b) => a.seatNumber - b.seatNumber)
                                 .forEach((seat) => {
-                                    const seatClass =
-                                        seat.status === "booked" ? "seat booked" : "seat available";
-                                    const isSelectedClass = SeatSelectionView.selectedSeats[seat.seatId]
-                                        ? "selected"
-                                        : "";
-                                    areaContentHtml += `<div class="${seatClass} ${isSelectedClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${area.price}" title="Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${area.price} DKK">
+                                    const userSessionId = localStorage.getItem('userSessionId'); // Hent den aktuelle session ID
+                                    let seatClass = 'seat'; // Start med grundklasse
+                                    let isSelectedClass = '';
+                                    let titleText = `Række ${seat.rowNumber}, Plads ${seat.seatNumber}: ${area.price} DKK`;
+
+                                    // Bestem grundklassen baseret på status fra backend
+                                    if (seat.status === 'booked') {
+                                        seatClass += ' booked';
+                                        titleText += ' (Permanent booket)';
+                                    } else if (seat.status === 'held_by_other') {
+                                        seatClass += ' held-by-other';
+                                        titleText += ' (Midlertidigt holdt af anden)';
+                                    } else if (seat.status === 'held_by_me') { // Sæde holdt af den aktuelle bruger
+                                        seatClass += ' available selected';
+                                        isSelectedClass = 'selected';
+                                        titleText += ' (Valgt - Holdt af dig)';
+                                    } else { // seat.status === 'free'
+                                        seatClass += ' available';
+                                        titleText += ' (Ledig)';
+                                    }
+                                    
+                                    // Hvis sædet er valgt lokalt i `selectedSeats` (før et hold request er sendt), skal det også vises som valgt
+                                    if (SeatSelectionView.selectedSeats[seat.seatId] && seat.status === 'free') {
+                                        isSelectedClass = 'selected';
+                                        seatClass += ' selected';
+                                        titleText += ' (Valgt lokalt)';
+                                    }
+
+                                    areaContentHtml += `<div class="${seatClass} ${isSelectedClass}" data-seat-id="${seat.seatId}" data-row="${seat.rowNumber}" data-seat="${seat.seatNumber}" data-price="${area.price}" title="${titleText}">
                                             ${seat.seatNumber}
                                         </div>`;
                                 });
@@ -317,43 +363,104 @@ const SeatSelectionView = {
         // --- Gå til betaling-knap ---
         const proceedButton = document.getElementById('proceed-to-checkout-button');
         if (proceedButton) {
-            proceedButton.addEventListener('click', () => {
-                if (Object.keys(SeatSelectionView.selectedSeats).length > 0) { // Tjekker om der er *nogen* valgte sæder
-                    showPage('checkout-page');
-                    CheckoutView.render(eventId);
-                    CheckoutView.afterRender(eventId);
-                } else {
-                    alert('Vælg venligst mindst én billet før du fortsætter.');
-                }
-            });
+            proceedButton.addEventListener('click', async () => { // Gør event listener funktionen 'async'
+        if (Object.keys(SeatSelectionView.selectedSeats).length === 0) {
+            alert('Vælg venligst mindst én billet før du fortsætter.');
+            return;
         }
-        // updateOrderSummary() og updateStandingAreaVisuals() kaldes nu fra render() metoden.
+
+        const selectedSeatingSeatIds = Object.keys(SeatSelectionView.selectedSeats)
+                                         .filter(key => SeatSelectionView.selectedSeats[key].type === 'seating')
+                                         .map(id => parseInt(id));
+        
+        // Hent userSessionId fra localStorage
+        const userSessionId = localStorage.getItem('userSessionId');
+        if (!userSessionId) {
+            console.error("Fejl: userSessionId ikke fundet. Kan ikke holde sæder.");
+            alert("Der opstod en fejl med din session. Prøv venligst at genindlæse siden.");
+            return;
+        }
+
+        try {
+            // Byg request body for at holde siddepladser
+            const holdRequestBody = {
+                seatIds: selectedSeatingSeatIds, // Sender kun de faktiske seat IDs
+                sessionId: userSessionId // Send den aktuelle session ID med
+            };
+
+            const response = await fetch(`http://localhost:8080/events/${eventId}/seats/hold`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(holdRequestBody)
+            });
+
+            if (!response.ok) {
+                const errorMsg = await response.text();
+                alert('Fejl ved reservation: ' + errorMsg);
+                // VIGTIGT: Genopfrisk sædekortet for at vise den nye status (f.eks. at et sæde er blevet "HELD" af en anden)
+                SeatSelectionView.selectedSeats = {}; // Nulstil lokale valg
+                SeatSelectionView.render(eventId); // Render igen for at reflektere backend-status
+                return;
+            }
+
+            // Backend returnerer den session ID, der nu holder sæderne. Gem den.
+            const newSessionIdFromBackend = await response.text();
+            localStorage.setItem('userSessionId', newSessionIdFromBackend); // Opdater, hvis backend gav en ny ID
+
+            // Gå videre til checkout. Send eventId, den bekræftede sessionId og de LOKALE valgte sæder (til info).
+            showPage('checkout-page');
+            CheckoutView.render(eventId, newSessionIdFromBackend, SeatSelectionView.selectedSeats); // sendes med
+            // Bemærk: CheckoutView.afterRender() kaldes typisk internt af CheckoutView.render()
+                           
+        } catch (error) {
+            console.error("Fejl ved hold af sæder:", error);
+            alert("Der opstod en uventet fejl ved reservation. Prøv igen.");
+        }
+    });
+}
     },
 
     // --- NY METODE: opdater visuel status for ståpladsområder ---
+   // --- I updateStandingAreaVisuals metoden ---
     updateStandingAreaVisuals: () => {
-        const activeArenaLayout = document.querySelector('.arena-visual-layout');
-        if (!activeArenaLayout) return; // TILFØJET DENNE LINJE
+    const activeArenaLayout = document.querySelector('.arena-visual-layout');
+    if (!activeArenaLayout) return;
 
-        activeArenaLayout.querySelectorAll('.standing-area-box').forEach(standingAreaBox => {
-            const areaId = standingAreaBox.dataset.areaId;
-            const currentStandingCount = SeatSelectionView.selectedSeats[areaId]?.count || 0;
+    const userSessionId = localStorage.getItem('userSessionId'); // Hent den aktuelle session ID
 
-            if (currentStandingCount > 0) {
-                standingAreaBox.classList.add('selected');
-                let selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
-                if (!selectedTextElement) {
-                    selectedTextElement = document.createElement('p');
-                    selectedTextElement.className = 'standing-selected-text';
-                    standingAreaBox.querySelector('.standing-info').appendChild(selectedTextElement);
-                }
-                selectedTextElement.textContent = `${currentStandingCount} valgt`;
-            } else {
-                standingAreaBox.classList.remove('selected');
-                const selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
-                if (selectedTextElement) selectedTextElement.remove();
+    activeArenaLayout.querySelectorAll('.standing-area-box').forEach(standingAreaBox => {
+        const areaId = standingAreaBox.dataset.areaId;
+        // Da du ikke sender individuel status for ståpladser via EventMapDto,
+        // er dette baseret på den lokale `selectedSeats` for nu.
+
+        const currentSelectedLocalCount = SeatSelectionView.selectedSeats[areaId]?.count || 0;
+        // Vi skal også tjekke den faktiske status fra backenden for at se, om den er HELD af andre.
+        // Dette kræver en opdatering af backend for at sende status for ståpladser også.
+        // For nu holder vi det simpelt og antager, at `dataset.maxTickets` er den korrekte kilde for tilgængelighed.
+
+        const availableTickets = parseInt(standingAreaBox.dataset.maxTickets); // Fra backend's beregning
+
+        // Visualiser lokalt valgte antal, hvis de ikke er "sold-out"
+        if (currentSelectedLocalCount > 0 && availableTickets > 0) { // Kun vis lokalt valgt, hvis der er plads
+            standingAreaBox.classList.add('selected');
+            let selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
+            if (!selectedTextElement) {
+                selectedTextElement = document.createElement('p');
+                selectedTextElement.className = 'standing-selected-text';
+                standingAreaBox.querySelector('.standing-info').appendChild(selectedTextElement);
             }
-        });
+            selectedTextElement.textContent = `${currentSelectedLocalCount} valgt`;
+        } else {
+            standingAreaBox.classList.remove('selected');
+            const selectedTextElement = standingAreaBox.querySelector('.standing-selected-text');
+            if (selectedTextElement) selectedTextElement.remove();
+        }
+
+        // Også nulstil lokale `selectedSeats` for ståplads-områder, hvis der var en fejl på backend hold.
+        // Dette gøres ved render(eventId), så det er okay.
+    });
     },
 
     // --- NYE METODER TIL MODALEN ---
