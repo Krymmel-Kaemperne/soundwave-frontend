@@ -1001,7 +1001,7 @@ header {
 
 
  /* <– Order Confirmation */
-#order-confirmation-page {
+#reservation-confirmation-page {
     flex-direction: column;
     align-items: center;
     padding: 30px;
@@ -1011,7 +1011,7 @@ header {
 }
 
 /* Main confirmation container */
-.order-confirmation {
+.reservation-confirmation {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -1024,7 +1024,7 @@ header {
 }
 
 /* Success header */
-.order-confirmation h2 {
+.reservation-confirmation h2 {
     font-size: 2rem;
     color: rgb(34, 164, 8);
     margin-bottom: 10px;
@@ -1032,14 +1032,14 @@ header {
     padding-bottom: 10px;
 }
 
-.order-confirmation p {
+.reservation-confirmation p {
     color: rgb(34, 164, 8);
     line-height: 1.4;
     margin-bottom: px;
 }
 
 /* Order details box */
-.order-details-box {
+.reservation-details-box {
     text-align: left;
     margin: 30px 0;
     padding: 25px;
@@ -1048,7 +1048,7 @@ header {
     border: 1px solid #eee;
 }
 
-.order-details-box h3 {
+.reservation-details-box h3 {
     font-size: 1.3rem;
         color: #333;
         margin-top: 35px;
@@ -1057,12 +1057,12 @@ header {
         padding-bottom: 5px;
 }
 
-.order-details-box p {
+.reservation-details-box p {
     margin-bottom: 15px; /* Øget fra 10px for mere luft */
     color: #444;
 }
 
-.order-details-box strong {
+.reservation-details-box strong {
     color: #4e5b69;
     font-weight: 600;
 
@@ -1086,7 +1086,7 @@ header {
 }
 
 /* Total styling som matcher checkout */
-.order-details-box>p:last-of-type {
+.reservation-details-box>p:last-of-type {
     font-size: 1.1rem;
     font-weight: bold;
     color: #222;

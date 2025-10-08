@@ -33,10 +33,10 @@ const CheckoutView = {
     return true;
   },
 
-  generateOrderNumber: () => {
+  generateReservationNumber: () => {
     const datePart = Date.now().toString().slice(-5);
     const randomPart = Math.floor(Math.random() * 900 + 100);
-    return `ORD-${datePart}${randomPart}`;
+    return `RES-${datePart}${randomPart}`;
   },
 
   render: async (eventId) => {
@@ -92,7 +92,7 @@ const CheckoutView = {
             </form>
           </div>
 
-          <div class="checkout-box checkout-summary-box" id="order-summary-checkout">
+          <div class="checkout-box checkout-summary-box" id="reservation-summary-checkout">
             <h3>Din bestilling: <span style="font-style: italic">${eventName}</span></h3>
             <ul id="checkout-selected-seats" style="list-style:none; padding:0;"></ul>
             <p class="checkout-total"><strong>Total:</strong> <span id="checkout-total-price">0</span> DKK</p>
@@ -100,13 +100,13 @@ const CheckoutView = {
         </div>
       `;
 
-      CheckoutView.updateOrderSummary();
+      CheckoutView.updateReservationSummary();
     } catch (error) {
       checkoutFormContainer.innerHTML = `<p style="color:red;">Kunne ikke hente eventdetaljer. Fejl: ${error.message}</p>`;
     }
   },
 
-  updateOrderSummary: () => {
+  updateReservationSummary: () => {
     const seatList = document.getElementById("checkout-selected-seats");
     const totalPriceSpan = document.getElementById("checkout-total-price");
 
@@ -178,20 +178,20 @@ const CheckoutView = {
 
           await CheckoutView.sendReserevation(eventId, name);
 
-          const order = {
-            orderNumber: CheckoutView.generateOrderNumber(),
+          const reservation = {
+            reservationNumber: CheckoutView.generateReservationNumber(),
             name: name,
             email: email,
             eventName: document
-              .querySelector("#order-summary-checkout h3 span")
+              .querySelector("#reservation-summary-checkout h3 span")
               .textContent.trim(),
             seats: SeatSelectionView.selectedSeats,
             total: document.getElementById("checkout-total-price").textContent,
           };
 
-          showPage("order-confirmation-page");
-          OrderConfirmationView.render(order);
-          OrderConfirmationView.afterRender();
+          showPage("reservation-confirmation-page");
+          ReservationConfirmationView.render(reservation);
+          ReservationConfirmationView.afterRender();
         });
       }
     }, 200);

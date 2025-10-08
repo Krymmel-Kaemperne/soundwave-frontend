@@ -1,20 +1,20 @@
-const OrderConfirmationView = {
-  render: (orderData) => {
-    const container = document.getElementById("order-confirmation-page");
+const ReservationConfirmationView = {
+  render: (reservationData) => {
+    const container = document.getElementById("reservation-confirmation-page");
     if (!container)
-      return console.error("Fejl: #order-confirmation-page ikke fundet.");
+      return console.error("Fejl: #reservation-confirmation-page ikke fundet.");
 
     container.innerHTML = `
-      <div class="order-confirmation">
-        <h2>Tak for dit køb, ${orderData.name}!</h2>
+      <div class="reservation-confirmation">
+        <h2>Tak for dit køb, ${reservationData.name}!</h2>
         <p>Din ordre er nu bekræftet.</p>
-        <div class="order-details-box">
-          <p><strong>Ordrenummer:</strong> ${orderData.orderNumber}</p>
-          <p><strong>Email:</strong> ${orderData.email}</p>
-          <p><strong>Event:</strong> ${orderData.eventName}</p>
+        <div class="reservation-details-box">
+          <p><strong>Ordrenummer:</strong> ${reservationData.reservationNumber}</p>
+          <p><strong>Email:</strong> ${reservationData.email}</p>
+          <p><strong>Event:</strong> ${reservationData.eventName}</p>
           <h3>Valgte billetter:</h3>
           <ul id="confirmed-seats" ></ul>
-          <p><strong>Total:</strong> ${orderData.total} DKK</p>
+          <p><strong>Total:</strong> ${reservationData.total} DKK</p>
         </div>
         <button id="back-to-events" class="action-button">Tilbage til events</button>
       </div>
@@ -22,8 +22,8 @@ const OrderConfirmationView = {
 
     // Fyld billetterne ind:
     const ul = document.getElementById("confirmed-seats");
-    for (const key in orderData.seats) {
-      const item = orderData.seats[key];
+    for (const key in reservationData.seats) {
+      const item = reservationData.seats[key];
       const li = document.createElement("li");
       li.textContent =
         item.type === "seating"
@@ -32,8 +32,7 @@ const OrderConfirmationView = {
       ul.appendChild(li);
     }
 
-    // 🟢 Efter HTML’en er sat ind, kaldes afterRender
-    OrderConfirmationView.afterRender();
+    ReservationConfirmationView.afterRender();
   },
 
   afterRender: () => {
