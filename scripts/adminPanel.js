@@ -115,18 +115,7 @@ const AdminPanelView = {
             <small>Upload et ${isEdit ? 'nyt ' : ''}billede${isEdit ? ' for at erstatte det eksisterende' : ' til eventet'} (valgfrit)</small>
             ${event?.imageUrl ? `<div style="margin-top: 10px;"><small>Nuværende billede: ${event.imageUrl}</small></div>` : ''}
           </div>
-
-          <div class="form-group">
-            <label for="event-visibility">Synlighed</label>
-            <div class="visibility-toggle">
-              <input type="checkbox" id="event-visibility" ${event?.isVisible !== false ? 'checked' : ''}>
-              <label for="event-visibility" class="toggle-label">
-                <span class="toggle-slider"></span>
-                <span class="toggle-text">Event er synligt for brugere</span>
-              </label>
-            </div>
-          </div>
-
+       
           <div class="form-actions">
             <button type="submit" class="action-button">${isEdit ? 'Gem Ændringer' : 'Gem Event'}</button>
           </div>
