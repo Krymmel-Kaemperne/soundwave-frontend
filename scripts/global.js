@@ -12,3 +12,10 @@ function showPage(pageId) {
         console.error(`Page with ID "${pageId}" not found.`);
     }
 }
+
+if (!localStorage.getItem('userSessionId')) {
+    localStorage.setItem('userSessionId', crypto.randomUUID());
+    console.log("Ny userSessionId genereret:", localStorage.getItem('userSessionId'));
+} else {
+    console.log("Eksisterende userSessionId:", localStorage.getItem('userSessionId'));
+}
