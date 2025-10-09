@@ -1,6 +1,14 @@
 // scripts/eventOverview.js
 
 const EventOverviewView = {
+    // Helper function to filter out hidden events
+    filterVisibleEvents: (events) => {
+        return events.filter(event => {
+            // If isVisible is not defined, default to true (backward compatibility)
+            return event.isVisible !== false;
+        });
+    },
+
     render: async () => {
         const heroSection = document.getElementById("hero-section");
         const contentContainer = document.getElementById("overview-content-container");
@@ -20,14 +28,17 @@ const EventOverviewView = {
             const events = await response.json();
             events.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
             
-            // 1. Vælg de første 3 events til slideren (eller færre, hvis der ikke er 3)
-            const sliderEvents = events.slice(0, 4);
+            // Filter out hidden events
+            const visibleEvents = EventOverviewView.filterVisibleEvents(events);
+            
+            // 1. Vælg de første 4 visible events til slideren (eller færre, hvis der ikke er 4)
+            const sliderEvents = visibleEvents.slice(0, 4);
 
             let slidesHtml = '';
             if (sliderEvents.length > 0) {
                 // 2. Byg HTML for hver "slide"
                 sliderEvents.forEach(event => {
-                    const slideImage = event.imageUrl || '/images/placeholder.png';
+                    const slideImage = event.imageUrl ? (event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl) : '/images/placeholder.png';
                     slidesHtml += `
                         <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${slideImage}')">
                             <div class="slide-content">
@@ -52,10 +63,10 @@ const EventOverviewView = {
                 `;
             }
 
-            // Byg HTML for event-grid (uændret)
+            // Byg HTML for event-grid (kun med visible events)
             let eventsGridHtml = '';
-            if (events.length > 0) {
-                events.forEach(event => {
+            if (visibleEvents.length > 0) {
+                visibleEvents.forEach(event => {
                     // ... (din eksisterende forEach-løkke til event-kort er uændret) ...
                     const eventDateTime = new Date(event.eventDate);
                     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -69,7 +80,7 @@ const EventOverviewView = {
 
                     eventsGridHtml += `
                         <div class="event-card ${soldOutClass}" ${clickAction} style="${cursorStyle}">
-                            <img src="${event.imageUrl || '/images/placeholder.jpg'}" alt="${event.title}" class="event-card-image">
+                            <img src="${event.imageUrl ? (event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl) : '/images/placeholder.jpg'}" alt="${event.title}" class="event-card-image">
                             <div class="event-card-info">
                                 <h3>${event.title}</h3>
                                 <p><strong>Dato:</strong> ${formattedDate} kl. ${formattedTime}</p>
@@ -86,7 +97,7 @@ const EventOverviewView = {
                     <h2 class="section-title">Kommende Events</h2>
                 </div>
                 <div class="event-grid">
-                    ${events.length > 0 ? eventsGridHtml : '<p style="text-align: center;">Ingen kommende events fundet.</p>'}
+                    ${visibleEvents.length > 0 ? eventsGridHtml : '<p style="text-align: center;">Ingen kommende events fundet.</p>'}
                 </div>
             `;
 

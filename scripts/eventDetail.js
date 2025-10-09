@@ -17,7 +17,9 @@ const EventDetailView = {
 
       // Kontroller om eventet er solgt ud
       const isSoldOut = event.status === 'Sold Out';
-      const buttonHtml = isSoldOut 
+      // Kontroller om eventet er skjult
+      const isHidden = event.isVisible === false;
+      const buttonHtml = isSoldOut
         ? `<p class="sold-out-text">Udsolgt!</p>`
         : `<button id="buy-tickets-btn" class="action-button">Køb Billet</button>`;
 
@@ -25,6 +27,7 @@ const EventDetailView = {
         <div style="display: flex; gap: 32px; align-items: flex-start; padding: 20px;">
             <div style="flex: 1;">
                 <button id="detail-back-button" class="action-button" style="margin-bottom: 16px;">&larr; Tilbage til oversigt</button>
+                ${isHidden ? '<div style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px; border-radius: 4px; margin-bottom: 16px;"><strong>Bemærk:</strong> Dette event er skjult og vises ikke på forsiden.</div>' : ''}
                 <h1>${event.title}</h1>
                 <p><strong>Dato:</strong> ${new Date(event.eventDate).toLocaleString('da-DK', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                 <p><strong>Hal:</strong> ${event.hall ? event.hall.name : 'Ukendt Hal'}</p>
@@ -34,7 +37,7 @@ const EventDetailView = {
                 ${buttonHtml} <!-- Knap eller udsolgt-tekst -->
             </div>
             <div style="flex: 2; display: flex; justify-content: flex-end;">
-                ${event.imageUrl ? `<img src="${event.imageUrl}" alt="${event.title}" class="event-image" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>` : ""}
+                ${event.imageUrl ? `<img src="${event.imageUrl.startsWith('/') ? event.imageUrl : '/images/' + event.imageUrl}" alt="${event.title}" class="event-image" style="max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"/>` : ""}
             </div>
         </div>
       `;
