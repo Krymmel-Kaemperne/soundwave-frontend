@@ -1,8 +1,6 @@
-// scripts/checkout.js
 const CheckoutView = {
   formatName(nameInput) {
     if (!nameInput) return "";
-
     return nameInput
       .trim()
       .replace(/\s+/g, " ")
@@ -16,10 +14,9 @@ const CheckoutView = {
       alert("Indtast venligst dit navn.");
       return false;
     }
-
-    const nameParts = name.trim().split(" ");
-    if (nameParts.length < 2 || nameParts.some((part) => part.length === 0)) {
-      alert("Indtast venligst dit fulde navn (fornavn og efternavn).");
+    const parts = name.trim().split(" ");
+    if (parts.length < 2 || parts.some((p) => p.length === 0)) {
+      alert("Indtast dit fulde navn (fornavn og efternavn).");
       return false;
     }
     return true;
@@ -27,32 +24,30 @@ const CheckoutView = {
 
   validateEmail(email) {
     if (!email || !email.includes("@")) {
-      alert("Indtast venligst en gyldig email-adresse med @.");
+      alert("Indtast venligst en gyldig email‑adresse med @.");
       return false;
     }
     return true;
   },
 
-  generateReservationNumber: () => {
+  generateReservationNumber() {
     const datePart = Date.now().toString().slice(-5);
     const randomPart = Math.floor(Math.random() * 900 + 100);
     return `RES-${datePart}${randomPart}`;
   },
 
   render: async (eventId) => {
-    const checkoutFormContainer = document.getElementById(
-      "checkout-form-container"
-    );
-    if (!checkoutFormContainer) return;
+    const container = document.getElementById("checkout-form-container");
+    if (!container) return;
 
+    // henter event-data (titel mm.)
     try {
-      const response = await fetch(`http://localhost:8080/events/${eventId}`);
-      if (!response.ok) throw new Error(`HTTP-fejl ${response.status}`);
-
-      const event = await response.json();
+      const resp = await fetch(`http://localhost:8080/events/${eventId}`);
+      if (!resp.ok) throw new Error(`HTTP-fejl ${resp.status}`);
+      const event = await resp.json();
       const eventName = event.title || `Event #${eventId}`;
 
-      checkoutFormContainer.innerHTML = `
+      container.innerHTML = `
         <div class="checkout-layout">
           <div class="checkout-box checkout-form-box">
             <h2>Gennemfør køb:</h2>
@@ -66,21 +61,12 @@ const CheckoutView = {
 
               <div class="checkout-field">
                 <label for="email">Email:</label>
-                <input id="email" type="text" placeholder="email@email.com" required>
+                <input id="email" type="email" placeholder="email@email.com" required>
               </div>
 
               <div class="checkout-field">
-                <label for="cardNumber">Kortoplysninger:</label>
-                <div class="card-icons-row">
-                  <p class="secure-payment">🔒 Sikker betaling</p>
-                  <div class="card-icons">
-                    <img src="images/visa.jpg" alt="Visa" title="Visa" />
-                    <img src="images/mastercard.jpg" alt="Mastercard" title="Mastercard" />
-                    <img src="images/mobile-pay.jpg" alt="Mobile Pay" title="Mobile Pay" />
-                    <img src="images/dankort.jpg" alt="Dankort" title="Dankort" />
-                  </div>
-                </div>
-                <input id="cardNumber" type="text" placeholder="XXXX‑XXXX‑XXXX‑XXXX" required>
+                <label for="cardNumber">Kortnummer:</label>
+                <input id="cardNumber" type="text" placeholder="XXXX-XXXX-XXXX-XXXX" required>
               </div>
 
               <div class="checkout-field half">
@@ -88,29 +74,32 @@ const CheckoutView = {
                 <input id="expiry" type="text" placeholder="MM/YY" maxlength="5" required>
               </div>
 
-              <button type="submit" class="action-button">Bekræft Køb</button>
+              <button type="submit" class="action-button">Bekræft køb</button>
             </form>
           </div>
 
           <div class="checkout-box checkout-summary-box" id="reservation-summary-checkout">
-            <h3>Din bestilling: <span style="font-style: italic">${eventName}</span></h3>
-            <ul id="checkout-selected-seats" style="list-style:none; padding:0;"></ul>
-            <p class="checkout-total"><strong>Total:</strong> <span id="checkout-total-price">0</span> DKK</p>
+            <h3>Din reservation: <span style="font-style: italic">${eventName}</span></h3>
+            <ul id="checkout-selected-seats"></ul>
+            <p class="checkout-total">
+              <strong>Total:</strong> <span id="checkout-total-price">0</span> DKK
+            </p>
           </div>
         </div>
       `;
 
       CheckoutView.updateReservationSummary();
     } catch (error) {
-      checkoutFormContainer.innerHTML = `<p style="color:red;">Kunne ikke hente eventdetaljer. Fejl: ${error.message}</p>`;
+      container.innerHTML = `<p style="color:red;">
+        Kunne ikke hente eventdetaljer: ${error.message}
+      </p>`;
     }
   },
 
-  updateReservationSummary: () => {
+  updateReservationSummary() {
     const seatList = document.getElementById("checkout-selected-seats");
-    const totalPriceSpan = document.getElementById("checkout-total-price");
-
-    if (!seatList || !totalPriceSpan) return;
+    const totalSpan = document.getElementById("checkout-total-price");
+    if (!seatList || !totalSpan) return;
 
     seatList.innerHTML = "";
     let total = 0;
@@ -118,86 +107,130 @@ const CheckoutView = {
     for (const key in SeatSelectionView.selectedSeats) {
       const item = SeatSelectionView.selectedSeats[key];
       let text = "";
-
-      //Seating
       if (item.type === "seating") {
         text = `Række ${item.row}, Plads ${item.seat} (${item.price} DKK)`;
         total += item.price;
-
-        //Standing
       } else if (item.type === "standing" && item.count > 0) {
         text = `${item.areaName} × ${item.count} (${
           item.count * item.price
         } DKK)`;
         total += item.count * item.price;
       }
-
       const li = document.createElement("li");
-      li.innerHTML = text;
+      li.textContent = text;
       seatList.appendChild(li);
     }
-
-    totalPriceSpan.textContent = total.toFixed(2);
+    totalSpan.textContent = total.toFixed(2);
   },
 
-  afterRender: (eventId) => {
-    const backButton = document.getElementById("checkout-back-button");
-    if (backButton) {
-      backButton.addEventListener("click", () => {
-        showPage("seat-selection-page");
-        SeatSelectionView.render(eventId);
-        SeatSelectionView.afterRender(eventId);
-      });
-    }
-
+  afterRender(eventId) {
     setTimeout(() => {
-      const checkoutForm = document.getElementById("checkout-form");
-      if (checkoutForm) {
-        checkoutForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
+      const form = document.getElementById("checkout-form");
+      if (!form) return;
 
-          const name = CheckoutView.formatName(
-            document.getElementById("name").value
-          );
-          const email = document.getElementById("email").value;
-          const cardNumber = document.getElementById("cardNumber").value.trim();
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-          if (!CheckoutView.validateName(name)) {
-            return;
-          }
+        const name = CheckoutView.formatName(
+          document.getElementById("name").value
+        );
+        const email = document.getElementById("email").value;
+        const cardNumber = document.getElementById("cardNumber").value.trim();
 
-          if (!CheckoutView.validateEmail(email)) {
-            return;
-          }
+        if (!CheckoutView.validateName(name)) return;
+        if (!CheckoutView.validateEmail(email)) return;
 
-          const sanitizedCard = cardNumber.replace(/[-\s]/g, "");
-          if (sanitizedCard.length !== 16 || isNaN(sanitizedCard)) {
-            alert("Kortnummer skal være 16 cifre.");
-            return;
-          }
+        const sanitized = cardNumber.replace(/[-\s]/g, "");
+        if (sanitized.length !== 16 || isNaN(sanitized)) {
+          alert("Kortnummer skal være 16 cifre.");
+          return;
+        }
 
-          await CheckoutView.sendReserevation(eventId, name);
+        // send til backend
+        const confirmation = await CheckoutView.sendReserevation(eventId, name);
+        if (!confirmation) {
+          alert("Booking mislykkedes, prøv igen.");
+          return;
+        }
 
-          const reservation = {
-            reservationNumber: CheckoutView.generateReservationNumber(),
-            name: name,
-            email: email,
-            eventName: document
-              .querySelector("#reservation-summary-checkout h3 span")
-              .textContent.trim(),
-            seats: SeatSelectionView.selectedSeats,
-            total: document.getElementById("checkout-total-price").textContent,
-          };
+        const reservation = {
+          reservationNumber: CheckoutView.generateReservationNumber(),
+          name: confirmation.customerName,
+          email: confirmation.customerEmail,
+          eventName: document
+            .querySelector("#reservation-summary-checkout h3 span")
+            .textContent.trim(),
+          seats: SeatSelectionView.selectedSeats,
+          total: confirmation.totalPrice,
+          status: confirmation.status,
+        };
 
-          showPage("reservation-confirmation-page");
-          ReservationConfirmationView.render(reservation);
-          ReservationConfirmationView.afterRender();
-        });
-      }
+        showPage("reservation-confirmation-page");
+        ReservationConfirmationView.render(reservation);
+        ReservationConfirmationView.afterRender();
+      });
     }, 200);
   },
 
   async sendReserevation(eventId, name) {
-    return new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const email = document.getElementById("email").value;
+      const totalPrice = parseFloat(
+        document.getElementById("checkout-total-price").textContent
+      );
+
+      // Clean up seatIds - fjern null values og konverter til Long
+      const cleanSeatIds = [];
+      const standingAreas = [];
+
+      for (const key in SeatSelectionView.selectedSeats) {
+        const item = SeatSelectionView.selectedSeats[key];
+        if (item.type === "seating" && item.id) {
+          cleanSeatIds.push(Number(item.id)); // <-- ÆNDRET: cleanSeatIds i stedet for seatIds
+        } else if (item.type === "standing" && item.count > 0) {
+          standingAreas.push({
+            areaId: Number(item.id),
+            count: Number(item.count),
+          });
+        }
+      }
+
+      const data = {
+        eventId: Number(eventId), // Sørg for det er et nummer
+        customerName: name,
+        customerEmail: email,
+        seatIds: cleanSeatIds, // Brug den rensede liste
+        standingAreas: standingAreas,
+        totalPrice: totalPrice,
+      };
+
+      console.log("📤 Sender booking data:", JSON.stringify(data, null, 2));
+
+      const response = await fetch(
+        "http://localhost:8080/checkout/confirm-booking",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Backend error response:", errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Booking confirmed:", result);
+      return result;
+    } catch (err) {
+      console.error("❌ Fejl ved booking:", err);
+      alert("Der opstod en fejl: " + err.message);
+      return null;
+    }
   },
 };

@@ -939,7 +939,8 @@ header {
     margin-bottom: 5px;
 }
 
-#checkout-form-container input[type="text"] {
+#checkout-form-container input[type="text"],
+#checkout-form-container input[type="email"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 12px;
