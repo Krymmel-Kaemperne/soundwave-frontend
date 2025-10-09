@@ -795,6 +795,273 @@ header {
 }
 
 
+
+
+
+/* ---  Checkout Page Styling --- */
+#checkout-page {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background-color: #fffdf9;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+/* Layout wrapper for form + bestilling box */
+.checkout-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Each individual box (form + summary) */
+.checkout-box {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px 35px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* Left form */
+.checkout-form-box {
+    flex: 2;
+    min-width: 360px;
+}
+
+/* Right summary */
+.checkout-summary-box {
+    flex: 1.2;
+    min-width: 350px;
+    max-width: 460px;;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px 35px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 10px rgba(255, 199, 132, 0.15);
+    position: sticky;
+    top: 20px;
+}
+
+/* Summary details */
+.checkout-summary-box h3 {
+    font-size: 1.2rem;
+    color: #333;
+    border-bottom: 2px solid #ffc784;
+    padding-bottom: 6px;
+    margin-bottom: 15px;
+}
+
+.checkout-summary-box ul li {
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+.checkout-summary-box ul li:last-child {
+    border: none;
+}
+
+.checkout-total {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #222;
+    margin-top: 10px;
+}
+
+#checkout-selected-seats .ticket-order-info {
+    font-style: italic;
+    color: #777;
+    font-size: 0.9rem;
+    margin-left: 4px;
+    /* adds a tiny space before the price part */
+}
+
+/* Headings and text */
+#checkout-form-container h2 {
+    font-size: 1.6rem;
+    color: #333;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #ffc784;
+}
+
+#checkout-form-container p {
+    margin-bottom: 25px;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* Inputs and labels */
+#checkout-form-container label {
+    font-weight: 600;
+    color: #4e5b69;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#checkout-form-container input[type="text"],
+#checkout-form-container input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#checkout-form-container input[type="text"]:focus {
+    border-color: #ffc784;
+    box-shadow: 0 0 5px rgba(255, 199, 132, 0.4);
+    outline: none;
+}
+
+
+.card-icons-row {
+    display: flex;
+    align-items: center;
+    /* <– lodret flugt */
+    gap: 20px;
+    /* <– afstand mellem tekst og billeder */
+    margin-top: 6px;
+    /* <– lidt luft efter label */
+}
+
+.secure-payment {
+    font-size: 12px;
+    color: grey;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    white-space: nowrap;
+
+    position: relative;
+    top: 12px;
+    /* teksten længere ned */
+}
+
+.card-icons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.card-icons img {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+     border: 1px solid #ccc;     /* tynd lysegrå kant */
+  border-radius: 4px;         /* blødere hjørner */
+}
+
+
+ /* <– Order Confirmation */
+#reservation-confirmation-page {
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    background-color: #fffdf9;
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+/* Main confirmation container */
+.reservation-confirmation {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+    margin: 0px auto;
+}
+
+/* Success header */
+.reservation-confirmation h2 {
+    font-size: 2rem;
+    color: rgb(34, 164, 8);
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ffc784;
+    padding-bottom: 10px;
+}
+
+.reservation-confirmation p {
+    color: rgb(34, 164, 8);
+    line-height: 1.4;
+    margin-bottom: px;
+}
+
+/* Order details box */
+.reservation-details-box {
+    text-align: left;
+    margin: 30px 0;
+    padding: 25px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.reservation-details-box h3 {
+    font-size: 1.3rem;
+        color: #333;
+        margin-top: 35px;
+        margin-bottom: 2px;
+        border-bottom: 2px solid #ffc784;
+        padding-bottom: 5px;
+}
+
+.reservation-details-box p {
+    margin-bottom: 15px; /* Øget fra 10px for mere luft */
+    color: #444;
+}
+
+.reservation-details-box strong {
+    color: #4e5b69;
+    font-weight: 600;
+
+}
+
+/* Confirmed seats list - matcher checkout summary styling */
+#confirmed-seats {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 30px 0;
+}
+
+#confirmed-seats li {
+    padding: 7px 0;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+#confirmed-seats li:last-child {
+    border: none;
+}
+
+/* Total styling som matcher checkout */
+.reservation-details-box>p:last-of-type {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #222;
+    /* Øget fra 25px */
+    border-top: 2px solid #ffc784;
+    padding-top: 35px;
+    /* Øget fra 15px */
+   
+}
 /* === CONFERENCE HALL LAYOUT === */
 .arena-visual-layout.conference-layout {
   max-width: unset; /* Giver plads til de mange sæder */
