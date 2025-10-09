@@ -201,7 +201,6 @@ const AdminPanelView = {
     basePrice: document.getElementById("event-price").value,
     hallId: document.getElementById("event-hall").value,
     fileInput: document.getElementById("event-image"),
-    isVisible: document.getElementById("event-visibility").checked
   }),
 
   // Validerer formulardata
