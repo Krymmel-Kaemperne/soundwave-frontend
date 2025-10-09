@@ -62,7 +62,7 @@ const EventDetailView = {
     const backBtn = document.getElementById("detail-back-button");
     if (backBtn) {
       backBtn.addEventListener("click", () => {
-        showPage("event-overview-page");
+        showPage("admin-panel-page");
         EventOverviewView.render();
         EventOverviewView.afterRender();
       });
