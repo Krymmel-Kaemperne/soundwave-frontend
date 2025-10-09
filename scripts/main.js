@@ -19,6 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
   AdminPanelView.afterRender();
 });
 
+document.getElementById("back-to-overview")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  showPage("event-overview-page");
+  EventOverviewView.render();
+  EventOverviewView.afterRender();
+});
+
     // Start applikationen ved at vise Event Oversigt som standard
     showPage('event-overview-page');
     EventOverviewView.render(); 
