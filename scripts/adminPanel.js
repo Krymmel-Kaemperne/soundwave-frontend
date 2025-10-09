@@ -23,7 +23,7 @@ const AdminPanelView = {
             <button id="admin-back-button" class="action-button">Tilbage til oversigt</button>
           </div>
         </div>
-        <p>Velkommen.</p>
+      
         <div id="events-table-container">
           <p>Henter events...</p>
         </div>

@@ -18,25 +18,29 @@ body {
     min-height: 409px;
 }
 /* === HEADER === */
-/* --- Header Styling --- */
-header {
-    background-color: #FFC784;
-    color: #36506b;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: center; /* Centrerer navigationen i headeren */
-    align-items: center;
+/* Kun titel-link i headeren */
+.site-header {
+  background-color: #FFC784;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* venstrejustér titel */
+  padding: 16px 24px;          
+  min-height: 68px;
 }
 
-.main-nav a {
-    color: #4E5B69;
-    text-decoration: none;
-    margin-left: 1.5rem;
-    font-weight: bold;
+/* Titel som link (sort) */
+.site-logo {
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-weight: 200;     
+  font-size: 50px;      /* større end footerens 2rem ≈ 32px */
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #4E5B69;       /* samme farve som footerens tekst/links */
+  text-decoration: none;
+  line-height: 1;
 }
-.main-nav a:hover {
-    color: #3A87E8;
-}
+
+
 /* === HERO SECTION === */
 /* --- Hero Section Styling (Slider) --- */
 .hero-section {

@@ -52,9 +52,7 @@ const EventOverviewView = {
                 heroSection.innerHTML = `
                     <div class="slider-wrapper">${slidesHtml}</div>
                     <button class="slider-btn prev-btn">&lt;</button>
-                    <button class="slider-btn next-btn">&gt;</button>
-                    <h1 class="hero-title">SoundWave</h1>
-                `;
+                    <button class="slider-btn next-btn">&gt;</button> `;
             } else {
                 // Fallback hvis der slet ingen events er
                 heroSection.innerHTML = `
