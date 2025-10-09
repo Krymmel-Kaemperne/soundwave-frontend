@@ -125,7 +125,23 @@ const CheckoutView = {
   },
 
   afterRender(eventId, sessionId, selectedSeats) {
-      const form = document.getElementById("checkout-form");
+
+    const backButton = document.getElementById('checkout-back-button');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        const lastEventId = sessionStorage.getItem('currentEventId');
+        if (lastEventId) {
+          showPage('seat-selection-page');
+          SeatSelectionView.render(lastEventId);
+        } else {
+          showPage('event-overview-page');
+          EventOverviewView.render();
+          EventOverviewView.afterRender();
+        }
+      });
+    }
+    
+    const form = document.getElementById("checkout-form");
       if (!form) { console.error("X Checkout form ikke fundet!"); return;
       }
 
