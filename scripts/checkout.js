@@ -179,14 +179,14 @@ const CheckoutView = {
         document.getElementById("checkout-total-price").textContent
       );
 
-      // Clean up seatIds - fjern null values og konverter til Long
+     
       const cleanSeatIds = [];
       const standingAreas = [];
 
       for (const key in SeatSelectionView.selectedSeats) {
         const item = SeatSelectionView.selectedSeats[key];
         if (item.type === "seating" && item.id) {
-          cleanSeatIds.push(Number(item.id)); // <-- ÆNDRET: cleanSeatIds i stedet for seatIds
+          cleanSeatIds.push(Number(item.id)); 
         } else if (item.type === "standing" && item.count > 0) {
           standingAreas.push({
             areaId: Number(item.id),
@@ -196,10 +196,10 @@ const CheckoutView = {
       }
 
       const data = {
-        eventId: Number(eventId), // Sørg for det er et nummer
+        eventId: Number(eventId), 
         customerName: name,
         customerEmail: email,
-        seatIds: cleanSeatIds, // Brug den rensede liste
+        seatIds: cleanSeatIds,
         standingAreas: standingAreas,
         totalPrice: totalPrice,
       };

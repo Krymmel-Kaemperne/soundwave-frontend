@@ -20,7 +20,7 @@ const ReservationConfirmationView = {
       </div>
     `;
 
-    // Fyld billetterne ind:
+    //Billetter
     const ul = document.getElementById("confirmed-seats");
     for (const key in reservationData.seats) {
       const item = reservationData.seats[key];
