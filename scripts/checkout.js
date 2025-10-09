@@ -128,19 +128,36 @@ const CheckoutView = {
 
     const backButton = document.getElementById('checkout-back-button');
     if (backButton) {
-      backButton.addEventListener('click', () => {
+      backButton.addEventListener('click', async() => {
         const lastEventId = sessionStorage.getItem('currentEventId');
-        if (lastEventId) {
+        const userSessionId = localStorage.getItem("userSessionId");
+        if (lastEventId && userSessionId) {
+        try {
+            // Send request til backend om at frigive holdte sæder
+            await fetch(`http://localhost:8080/events/${lastEventId}/seats/release-held-seats`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ sessionId: userSessionId })
+            });
+            // Vi tjekker ikke for success/failure her, da brugeren alligevel navigerer væk.
+            // Backend's CleanupService vil fange dem, hvis denne request fejler.
+          } catch (error) {
+            console.error("Fejl ved frigivelse af holdte sæder:", error);
+            // Alert ikke brugeren her, da det blot ville forstyrre tilbage-flowet
+          }
           showPage('seat-selection-page');
           SeatSelectionView.render(lastEventId);
         } else {
-          showPage('event-overview-page');
+          showPage("event-overview-page")  
           EventOverviewView.render();
           EventOverviewView.afterRender();
         }
       });
     }
-    
+
+
     const form = document.getElementById("checkout-form");
       if (!form) { console.error("X Checkout form ikke fundet!"); return;
       }
