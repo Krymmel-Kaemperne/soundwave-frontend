@@ -36,7 +36,7 @@ const CheckoutView = {
     return `RES-${datePart}${randomPart}`;
   },
 
-  render: async (eventId) => {
+  render: async (eventId, sessionId, selectedSeats) => {
     const container = document.getElementById("checkout-form-container");
     if (!container) return;
 
@@ -89,6 +89,7 @@ const CheckoutView = {
       `;
 
       CheckoutView.updateReservationSummary();
+      CheckoutView.afterRender(eventId, sessionId, selectedSeats);
     } catch (error) {
       container.innerHTML = `<p style="color:red;">
         Kunne ikke hente eventdetaljer: ${error.message}
@@ -123,10 +124,12 @@ const CheckoutView = {
     totalSpan.textContent = total.toFixed(2);
   },
 
-  afterRender(eventId) {
-    setTimeout(() => {
+  afterRender(eventId, sessionId, selectedSeats) {
       const form = document.getElementById("checkout-form");
-      if (!form) return;
+      if (!form) { console.error("X Checkout form ikke fundet!"); return;
+      }
+
+      console.log("✅ Checkout form fundet, tilføjer event listener");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -145,6 +148,8 @@ const CheckoutView = {
           alert("Kortnummer skal være 16 cifre.");
           return;
         }
+
+        console.log("🎫 Starter booking...");
 
         // send til backend
         const confirmation = await CheckoutView.sendReserevation(eventId, name);
@@ -165,12 +170,13 @@ const CheckoutView = {
           status: confirmation.status,
         };
 
+        console.log("🚀 Navigerer til confirmation med:", reservation);
+
         showPage("reservation-confirmation-page");
         ReservationConfirmationView.render(reservation);
         ReservationConfirmationView.afterRender();
       });
-    }, 200);
-  },
+    },
 
   async sendReserevation(eventId, name) {
     try {
@@ -184,16 +190,17 @@ const CheckoutView = {
       const standingAreas = [];
 
       for (const key in SeatSelectionView.selectedSeats) {
-        const item = SeatSelectionView.selectedSeats[key];
-        if (item.type === "seating" && item.id) {
-          cleanSeatIds.push(Number(item.id)); 
-        } else if (item.type === "standing" && item.count > 0) {
-          standingAreas.push({
-            areaId: Number(item.id),
-            count: Number(item.count),
-          });
+            const item = SeatSelectionView.selectedSeats[key];
+            if (item.type === "seating" && (item.id || item.seatId)) {
+                cleanSeatIds.push(Number(item.id || item.seatId));
+            } else if (item.type === "standing" && item.count > 0) {
+                // BRUG "key" I STEDET FOR "item.id" FOR STÅPLADSER
+                standingAreas.push({
+                    areaId: Number(key), 
+                    count: Number(item.count),
+                });
+            }
         }
-      }
 
       const data = {
         eventId: Number(eventId), 

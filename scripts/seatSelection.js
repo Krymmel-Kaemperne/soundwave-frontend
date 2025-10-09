@@ -125,7 +125,7 @@ const SeatSelectionView = {
                         const isStandingAreaBookedOut = availableTickets <= 0;
                         areaContentHtml += `<div class="standing-area-box ${
                             isStandingAreaBookedOut ? "sold-out" : ""
-                        }" data-area-id="${area.areaId}" area-price="${
+                        }" data-area-id="${area.areaId}" data-price="${
                             area.price
                         }" data-area-name="${area.areaName}" data-max-tickets="${availableTickets}" ${
                             isStandingAreaBookedOut ? "" : 'role="button" tabindex="0"'
@@ -411,11 +411,10 @@ const SeatSelectionView = {
 
             // Gå videre til checkout. Send eventId, den bekræftede sessionId og de LOKALE valgte sæder (til info).
             showPage('checkout-page');
-            CheckoutView.render(eventId, newSessionIdFromBackend, SeatSelectionView.selectedSeats); // sendes med
-            // Bemærk: CheckoutView.afterRender() kaldes typisk internt af CheckoutView.render()
+            CheckoutView.render(eventId, newSessionIdFromBackend, SeatSelectionView.selectedSeats);
                            
         } catch (error) {
-            console.error("Fejl ved hold af sæder:", error);
+            console.error("Fejl ved hold af sæ  der:", error);
             alert("Der opstod en uventet fejl ved reservation. Prøv igen.");
         }
     });
