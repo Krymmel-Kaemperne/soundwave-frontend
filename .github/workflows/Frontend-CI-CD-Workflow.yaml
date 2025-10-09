@@ -2,37 +2,43 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 #v5.0
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 #3.11.1
-      
-# Login til GitHub Container Registry (GHCR)
-  - name: Login to GitHub Container Registry
-    uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
-    with:
-      registry: ghcr.io
-      username: ${{ github.actor }}
-      password: ${{ secrets.GITHUB_TOKEN }}
 
-  # Byg og push Docker image til GHCR
-  - name: Build and push Docker image
-    uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
-    with:
-      context: .
-      push: true
-      tags: |
-        ghcr.io/${{ github.repository }}:latest
-        ghcr.io/${{ github.repository }}:${{ github.sha }}
-      cache-from: type=gha
-      cache-to: type=gha,mode=max
+    steps:
+      # Hent koden
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0
+
+      # Sæt Buildx op til Docker builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+
+      # Login til GitHub Container Registry (GHCR)
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Byg og push Docker image til GHCR
+      - name: Build and push Docker image
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
