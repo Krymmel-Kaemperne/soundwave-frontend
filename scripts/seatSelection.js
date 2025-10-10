@@ -7,6 +7,8 @@ const SeatSelectionView = {
     currentStandingArea: null, // Holder styr på hvilken ståplads-område modalen viser
 
     render: async (eventId) => {
+        sessionStorage.setItem('currentEventId', eventId);
+        
         const pageContainer = document.getElementById("seat-selection-page");
         if (!pageContainer) {
             console.error("Fejl: #seat-selection-page div'en blev ikke fundet.");
@@ -122,6 +124,12 @@ const SeatSelectionView = {
                     let areaContentHtml = `<div class="area-container" data-area-id="${area.areaId}">`;
                     if (area.type === "standing") {
                         const availableTickets = area.capacity - area.bookedCount;
+                        console.log("=== STANDING AREA FRONTEND ===");
+                        console.log("Area:", area.areaName);
+                        console.log("Capacity:", area.capacity);
+                        console.log("Booked:", area.bookedCount);
+                        console.log("Available:", availableTickets);
+
                         const isStandingAreaBookedOut = availableTickets <= 0;
                         areaContentHtml += `<div class="standing-area-box ${
                             isStandingAreaBookedOut ? "sold-out" : ""
@@ -372,7 +380,19 @@ const SeatSelectionView = {
         const selectedSeatingSeatIds = Object.keys(SeatSelectionView.selectedSeats)
                                          .filter(key => SeatSelectionView.selectedSeats[key].type === 'seating')
                                          .map(id => parseInt(id));
-        
+
+        const selectedStandingAreasCount = Object.values(SeatSelectionView.selectedSeats)
+                                            .filter(item => item.type === 'standing' && item.count > 0)
+                                            .length;
+
+        const hasSeatingSeats = selectedSeatingSeatIds.length > 0;
+        const hasStandingSeats = selectedStandingAreasCount > 0;
+
+        if (!hasSeatingSeats && !hasStandingSeats) {
+             alert('Vælg venligst mindst én billet før du fortsætter.');
+             return;
+        }                   
+
         // Hent userSessionId fra localStorage
         const userSessionId = localStorage.getItem('userSessionId');
         if (!userSessionId) {
@@ -381,8 +401,11 @@ const SeatSelectionView = {
             return;
         }
 
+        let finalSessionId = userSessionId;
+
         try {
             // Byg request body for at holde siddepladser
+            if(hasSeatingSeats) {
             const holdRequestBody = {
                 seatIds: selectedSeatingSeatIds, // Sender kun de faktiske seat IDs
                 sessionId: userSessionId // Send den aktuelle session ID med
@@ -406,20 +429,20 @@ const SeatSelectionView = {
             }
 
             // Backend returnerer den session ID, der nu holder sæderne. Gem den.
-            const newSessionIdFromBackend = await response.text();
-            localStorage.setItem('userSessionId', newSessionIdFromBackend); // Opdater, hvis backend gav en ny ID
-
+            finalSessionId = await response.text();
+            localStorage.setItem('userSessionId', finalSessionId); // Opdater localStorage med den nye (eller samme) session ID // Opdater, hvis backend gav en ny ID
+            }        
             // Gå videre til checkout. Send eventId, den bekræftede sessionId og de LOKALE valgte sæder (til info).
             showPage('checkout-page');
-            CheckoutView.render(eventId, newSessionIdFromBackend, SeatSelectionView.selectedSeats);
+            CheckoutView.render(eventId, finalSessionId, SeatSelectionView.selectedSeats);
                            
         } catch (error) {
-            console.error("Fejl ved hold af sæ  der:", error);
-            alert("Der opstod en uventet fejl ved reservation. Prøv igen.");
+            console.error("Fejl ved hold af sæder:", error.message); 
+            alert("Der opstod en uventet fejl ved reservation. Prøv igen. Detaljer: " + error.message); // Giv brugeren mere info
         }
     });
 }
-    },
+},
 
     // --- NY METODE: opdater visuel status for ståpladsområder ---
    // --- I updateStandingAreaVisuals metoden ---

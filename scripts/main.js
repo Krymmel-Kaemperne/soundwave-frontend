@@ -19,6 +19,20 @@ document.addEventListener("DOMContentLoaded", () => {
   AdminPanelView.afterRender();
 });
 
+document.getElementById("back-to-overview")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  showPage("event-overview-page");
+  EventOverviewView.render();
+  EventOverviewView.afterRender();
+});
+
+document.getElementById('nav-show-about').addEventListener('click', (e) => {
+        e.preventDefault();
+        showPage('about-soundwave-page');
+        AboutView.render();
+        AboutView.afterRender();
+    });
+
     // Start applikationen ved at vise Event Oversigt som standard
     showPage('event-overview-page');
     EventOverviewView.render(); 

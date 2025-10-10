@@ -10,12 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   </head>
   <body>
-
-
         <header class="site-header">
         <a href="#" id="nav-home" class="site-logo">SOUNDWAVE</a>
         </header>
-
+        
     <main>
       <!-- Hver af disse divs repræsenterer en "side" eller et "view" -->
       <!-- CSS vil styre hvilken der er synlig: display: none/block -->
@@ -24,7 +22,7 @@
       <div id="event-overview-page" class="page-view active">
         <!-- === Hero Section === -->
         <section class="hero-section" id="hero-section">
-          <h1 class="hero-title">SoundWave</h1>
+          <h1 class="hero-title">SoundWave</h1> 
         </section>
 
         <!-- Container hvor JS indsætter events -->
@@ -65,14 +63,15 @@
       <div id="reservation-confirmation-page" class="page-view">
         <h2>Order Confirmation</h2>
       </div>
+
+      <div id="about-soundwave-page" class="page-view">
+        <div id="about-soundwave-content">
+            <p style="text-align: center;">Loading About Soundwave...</p>
+        </div>
+      </div>
     </main>
 
-  
-
- 
-
         <footer class="main-footer">
-
           <div class="footer-section title">
             <h1>Soundwave</h1>
           </div>
@@ -93,6 +92,7 @@
               <a href="#">FAQ</a>
               <a href="#">Privatlivspolitik</a>
               <a href="#">Handelsbetingelser</a>
+              <a href="#" id="nav-show-about"> Om Soundwave</a>
           </div>
 
           <div class="footer-section admin-login ">
@@ -116,6 +116,7 @@
     <script src="scripts/checkout.js"></script>
     <script src="scripts/reservationConfirmation.js"></script>
     <script src="scripts/adminPanel.js"></script>
+    <script src="scripts/aboutview.js"></script>
     <script src="scripts/main.js"></script>
   </body>
 </html>
