@@ -444,7 +444,6 @@ const SeatSelectionView = {
 }
 },
 
-    // --- NY METODE: opdater visuel status for ståpladsområder ---
    // --- I updateStandingAreaVisuals metoden ---
     updateStandingAreaVisuals: () => {
     const activeArenaLayout = document.querySelector('.arena-visual-layout');
@@ -454,14 +453,9 @@ const SeatSelectionView = {
 
     activeArenaLayout.querySelectorAll('.standing-area-box').forEach(standingAreaBox => {
         const areaId = standingAreaBox.dataset.areaId;
-        // Da du ikke sender individuel status for ståpladser via EventMapDto,
-        // er dette baseret på den lokale `selectedSeats` for nu.
+        // er dette baseret på den lokale `selectedSeats`
 
         const currentSelectedLocalCount = SeatSelectionView.selectedSeats[areaId]?.count || 0;
-        // Vi skal også tjekke den faktiske status fra backenden for at se, om den er HELD af andre.
-        // Dette kræver en opdatering af backend for at sende status for ståpladser også.
-        // For nu holder vi det simpelt og antager, at `dataset.maxTickets` er den korrekte kilde for tilgængelighed.
-
         const availableTickets = parseInt(standingAreaBox.dataset.maxTickets); // Fra backend's beregning
 
         // Visualiser lokalt valgte antal, hvis de ikke er "sold-out"
@@ -480,8 +474,7 @@ const SeatSelectionView = {
             if (selectedTextElement) selectedTextElement.remove();
         }
 
-        // Også nulstil lokale `selectedSeats` for ståplads-områder, hvis der var en fejl på backend hold.
-        // Dette gøres ved render(eventId), så det er okay.
+        
     });
     },
 

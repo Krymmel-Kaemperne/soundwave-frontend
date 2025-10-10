@@ -15,7 +15,7 @@ const EventDetailView = {
 
        const event = await response.json();
 
-      // Kontroller om eventet er solgt ud
+      // Kontroller om eventet er udsolgt
       const isSoldOut = event.status === 'Sold Out';
       // Kontroller om eventet er skjult
       const isHidden = event.isVisible === false;

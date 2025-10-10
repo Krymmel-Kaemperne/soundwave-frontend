@@ -65,7 +65,6 @@ const EventOverviewView = {
             let eventsGridHtml = '';
             if (visibleEvents.length > 0) {
                 visibleEvents.forEach(event => {
-                    // ... (din eksisterende forEach-løkke til event-kort er uændret) ...
                     const eventDateTime = new Date(event.eventDate);
                     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
                     const timeOptions = { hour: '2-digit', minute: '2-digit' };
