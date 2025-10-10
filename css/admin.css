@@ -155,6 +155,7 @@
   background-color: #FFC784;
 }
 
+
 .visibility-toggle input[type="checkbox"]:checked + .toggle-label .toggle-slider::before {
   transform: translateX(26px);
 }

@@ -162,7 +162,7 @@ const CheckoutView = {
       if (!form) { console.error("X Checkout form ikke fundet!"); return;
       }
 
-      console.log("✅ Checkout form fundet, tilføjer event listener");
+      console.log("Checkout form fundet, tilføjer event listener");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -182,7 +182,7 @@ const CheckoutView = {
           return;
         }
 
-        console.log("🎫 Starter booking...");
+        console.log("Starter booking...");
 
         // send til backend
         const confirmation = await CheckoutView.sendReserevation(eventId, name);
@@ -203,7 +203,7 @@ const CheckoutView = {
           status: confirmation.status,
         };
 
-        console.log("🚀 Navigerer til confirmation med:", reservation);
+        console.log("Navigerer til confirmation med:", reservation);
 
         showPage("reservation-confirmation-page");
         ReservationConfirmationView.render(reservation);
@@ -244,7 +244,7 @@ const CheckoutView = {
         totalPrice: totalPrice,
       };
 
-      console.log("📤 Sender booking data:", JSON.stringify(data, null, 2));
+      console.log("Sender booking data:", JSON.stringify(data, null, 2));
 
       const response = await fetch(
         "http://localhost:8080/checkout/confirm-booking",
@@ -265,10 +265,10 @@ const CheckoutView = {
       }
 
       const result = await response.json();
-      console.log("✅ Booking confirmed:", result);
+      console.log("Booking confirmed:", result);
       return result;
     } catch (err) {
-      console.error("❌ Fejl ved booking:", err);
+      console.error("Fejl ved booking:", err);
       alert("Der opstod en fejl: " + err.message);
       return null;
     }

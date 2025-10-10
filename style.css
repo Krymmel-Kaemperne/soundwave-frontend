@@ -23,7 +23,7 @@ body {
   background-color: #FFC784;
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* venstrejustér titel */
+  justify-content: flex-start;
   padding: 16px 24px;          
   min-height: 68px;
 }
@@ -32,10 +32,10 @@ body {
 .site-logo {
   font-family: "Be Vietnam Pro", sans-serif;
   font-weight: 200;     
-  font-size: 50px;      /* større end footerens 2rem ≈ 32px */
+  font-size: 50px;      
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: #4E5B69;       /* samme farve som footerens tekst/links */
+  color: #4E5B69;     
   text-decoration: none;
   line-height: 1;
 }
@@ -130,7 +130,7 @@ body {
     transition: background-color 0.2s;
 }
 .action-button:hover {
-    background-color: #f7a853; /* Lidt mørkere orange ved hover */
+    background-color: #f7a853; 
 }
 .action-button:disabled {
     opacity: 0.5;
@@ -489,7 +489,7 @@ body {
     gap: 0; 
 }
 
-/* Rækkenummeret - da det er tomt i din HTML, gør vi det helt usynligt, så det ikke tager plads */
+
 .seat-row-wrapper span {
     display: none; 
 }
@@ -545,7 +545,7 @@ body {
 }
 
 .seat.held-by-other {
-    background-color: #ff9800; /* Orange farve for holdte sæder */
+    background-color: #ff9800;
     color: white;
     border-color: #e65100;
     cursor: not-allowed; /* Man kan ikke vælge et sæde holdt af en anden */
@@ -882,10 +882,8 @@ body {
     color: #777;
     font-size: 0.9rem;
     margin-left: 4px;
-    /* adds a tiny space before the price part */
 }
-
-/* Headings and text */
+/* Form styling */
 #checkout-form-container h2 {
     font-size: 1.6rem;
     color: #333;
@@ -1027,7 +1025,7 @@ body {
 }
 
 .reservation-details-box p {
-    margin-bottom: 15px; /* Øget fra 10px for mere luft */
+    margin-bottom: 15px; 
     color: #444;
 }
 
@@ -1059,10 +1057,8 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
     color: #222;
-    /* Øget fra 25px */
     border-top: 2px solid #ffc784;
     padding-top: 35px;
-    /* Øget fra 15px */
    
 }
 /* === CONFERENCE HALL LAYOUT === */
@@ -1100,7 +1096,7 @@ body {
     display: flex; /* For at holde rækkenummer og sæder samlet på én linje */
     justify-content: center; /* Centrer rækkerne i den ydre container */
     align-items: center;
-    width: 100%; /* Sørg for at wrapperen strækker sig */
+    width: 100%; 
     box-sizing: border-box; /* Inkluder padding i bredden */
 }
 
@@ -1147,10 +1143,10 @@ body {
     text-align: center; /* Centrerer teksten */
     max-width: 900px;   /* Beholder samme max-width som .about-us-container */
     margin: 0 auto 20px auto; /* Centrerer blokken og giver bundmargin */
-    border-bottom: 2px solid #e0e0e0; /* Beholder stregen */
-    padding-bottom: 10px; /* Beholder padding under stregen */
-    padding-left: 20px; /* ✅ Tilføj padding her for luft i siderne */
-    padding-right: 20px; /* ✅ Tilføj padding her for luft i siderne */
+    border-bottom: 2px solid #e0e0e0; 
+    padding-bottom: 10px; 
+    padding-left: 20px; 
+    padding-right: 20px; 
     box-sizing: border-box; /* Sikrer padding ikke øger bredden */
 }
 
@@ -1209,17 +1205,15 @@ body {
     overflow: hidden;
     flex: 1 1 calc(50% - 30px); /* To kort pr. række med mellemrum */
     min-width: 300px; /* Minimum bredde før de bryder linje */
-    max-width: 450px; /* ✅ NYT: Sæt en maksimal bredde for kortet */
-    display: flex;
+    max-width: 450px; 
     flex-direction: column;
 }
 
 .hall-image {
     width: 100%;
-    /* ✅ ÆNDRET: Fjernet fast højde, brug aspect-ratio for at undgå stræk */
-    /* object-fit: cover; bruges nu bedre med flexbox */
-    aspect-ratio: 16 / 9; /* ✅ NYT: Billedet får en 16:9 ratio (bredformat) */
-    object-fit: cover;   /* Dette virker nu bedre, da ratio er fastsat */
+   
+    aspect-ratio: 16 / 9; 
+    object-fit: cover;   
     border-bottom: 1px solid #eee;
     order: 2;
 }
