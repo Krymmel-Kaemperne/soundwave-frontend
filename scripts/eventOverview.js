@@ -21,7 +21,7 @@ const EventOverviewView = {
         contentContainer.innerHTML = `<p style="text-align: center;">Henter events...</p>`;
 
         try {
-            const response = await fetch('http://localhost:8080/events');
+            const response = await fetch('${API_BASE_URL}/events');
             if (!response.ok) {
                 throw new Error(`HTTP fejl! Status: ${response.status}`);
             }

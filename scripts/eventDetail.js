@@ -8,7 +8,7 @@ const EventDetailView = {
           return;
     }
     try {
-      const response = await fetch(`http://localhost:8080/events/${eventId}`);
+      const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
       if (!response.ok) {
         throw new Error("Kunne ikke hente event detaljer.");
       }

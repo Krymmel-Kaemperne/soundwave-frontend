@@ -1,7 +1,7 @@
 // scripts/adminPanel.js
 
 // === KONFIGURATION ===
-const API_URL = "http://localhost:8080";
+// const API_URL = "http://localhost:8080"; // Fjernes, da vi bruger global API_BASE_URL
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const AdminPanelView = {
@@ -174,7 +174,8 @@ const AdminPanelView = {
         isVisible: formData.isVisible
       };
 
-      const url = eventId ? `${API_URL}/events/${eventId}` : `${API_URL}/events`;
+      // Bruger nu API_BASE_URL
+      const url = eventId ? `${API_BASE_URL}/events/${eventId}` : `${API_BASE_URL}/events`;
       const method = eventId ? "PUT" : "POST";
       
       const response = await fetch(url, {
@@ -225,7 +226,8 @@ const AdminPanelView = {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_URL}/upload/image`, {
+    // Bruger nu API_BASE_URL
+    const response = await fetch(`${API_BASE_URL}/upload/image`, {
       method: "POST",
       mode: 'cors',
       body: formData
@@ -323,14 +325,16 @@ const AdminPanelView = {
   // === API FUNKTIONER ===
   // Henter alle events fra serveren
   fetchEvents: async () => {
-    const response = await fetch(`${API_URL}/events`);
+    // Bruger nu API_BASE_URL
+    const response = await fetch(`${API_BASE_URL}/events`);
     if (!response.ok) throw new Error("Kunne ikke hente events");
     return await response.json();
   },
 
   // Henter et enkelt event fra serveren
   fetchEvent: async (eventId) => {
-    const response = await fetch(`${API_URL}/events/${eventId}`);
+    // Bruger nu API_BASE_URL
+    const response = await fetch(`${API_BASE_URL}/events/${eventId}`);
     if (!response.ok) throw new Error("Kunne ikke hente event");
     return await response.json();
   },
@@ -341,7 +345,8 @@ const AdminPanelView = {
       const eventData = await AdminPanelView.fetchEvent(eventId);
       const updatedEvent = { ...eventData, ...updates };
       
-      const response = await fetch(`${API_URL}/events/${eventId}`, {
+      // Bruger nu API_BASE_URL
+      const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedEvent)

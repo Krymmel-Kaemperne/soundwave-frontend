@@ -42,7 +42,8 @@ const CheckoutView = {
 
     // henter event-data (titel mm.)
     try {
-      const resp = await fetch(`http://localhost:8080/events/${eventId}`);
+      // Brug nu API_BASE_URL
+      const resp = await fetch(`${API_BASE_URL}/events/${eventId}`);
       if (!resp.ok) throw new Error(`HTTP-fejl ${resp.status}`);
       const event = await resp.json();
       const eventName = event.title || `Event #${eventId}`;
@@ -134,7 +135,8 @@ const CheckoutView = {
         if (lastEventId && userSessionId) {
         try {
             // Send request til backend om at frigive holdte sæder
-            await fetch(`http://localhost:8080/events/${lastEventId}/seats/release-held-seats`, {
+            // Brug nu API_BASE_URL
+            await fetch(`${API_BASE_URL}/events/${lastEventId}/seats/release-held-seats`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -246,8 +248,9 @@ const CheckoutView = {
 
       console.log("Sender booking data:", JSON.stringify(data, null, 2));
 
+      // Brug nu API_BASE_URL
       const response = await fetch(
-        "http://localhost:8080/checkout/confirm-booking",
+        `${API_BASE_URL}/checkout/confirm-booking`,
         {
           method: "POST",
           headers: {

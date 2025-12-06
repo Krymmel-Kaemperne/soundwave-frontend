@@ -20,7 +20,7 @@ const SeatSelectionView = {
         SeatSelectionView.totalPrice = 0;    // Nulstil total pris
 
         try {
-            const response = await fetch(`http://localhost:8080/events/${eventId}/seats/map`);
+            const response = await fetch(`${API_BASE_URL}/${eventId}/seats/map`);
             if (!response.ok) {
                 throw new Error(`HTTP fejl! Status: ${response.status}`);
             }
@@ -46,7 +46,7 @@ const SeatSelectionView = {
 
             // --- Logik til at vælge layout baseret på isConferenceHall ---
             if (isConferenceHall) {
-                // --- A. CONFERENCE HALL LAYOUT (SIMPELT GRID) ---
+                // --- A. CONFERENCE HALL LAYOUT ---
                 let conferenceHtml = `<div class="conference-seating-area">`;
 
                 SeatSelectionView.mockData.areas.forEach((area) => {
@@ -103,7 +103,7 @@ const SeatSelectionView = {
                 conferenceHtml += `</div>`;
                 fullPageHtml += conferenceHtml;
             } else {
-                // --- B. MAIN ARENA LAYOUT (EKSISTERENDE KOMPLEKST GRID) ---
+                // --- B. MAIN ARENA LAYOUT ---
                 let standingAreaHtml = "";
                 let vipLeftHtml = "";
                 let vipRightHtml = "";
@@ -411,7 +411,7 @@ const SeatSelectionView = {
                 sessionId: userSessionId // Send den aktuelle session ID med
             };
 
-            const response = await fetch(`http://localhost:8080/events/${eventId}/seats/hold`, {
+            const response = await fetch(`${API_BASE_URL}/events/${eventId}/seats/hold`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
