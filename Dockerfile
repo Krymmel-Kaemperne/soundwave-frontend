@@ -1,13 +1,12 @@
-FROM node:18-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy static files
-COPY . .
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Install a simple HTTP server
-RUN npm install -g http-server
+COPY . /usr/share/nginx/html
 
 EXPOSE 5500
 
-CMD ["http-server", "-p", "5500", "-c-1"]
+CMD ["nginx", "-g", "daemon off;"]
