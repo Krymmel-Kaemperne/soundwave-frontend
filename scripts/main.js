@@ -1,4 +1,6 @@
-// scripts/main.js - Din enkleste hovedcontroller
+// scripts/main.js
+// === Global Konfiguration === 
+const API_BASE_URL = window.location.origin + "/api";
 
 // *** Applikationens Startpunkt ***
 document.addEventListener("DOMContentLoaded", () => {
