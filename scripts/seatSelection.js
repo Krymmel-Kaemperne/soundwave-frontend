@@ -20,7 +20,7 @@ const SeatSelectionView = {
         SeatSelectionView.totalPrice = 0;    // Nulstil total pris
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${eventId}/seats/map`);
+            const response = await fetch(`${API_BASE_URL}/events/${eventId}/seats/map`);
             if (!response.ok) {
                 throw new Error(`HTTP fejl! Status: ${response.status}`);
             }
